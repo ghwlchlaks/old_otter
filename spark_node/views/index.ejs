@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  </head>
+  <body>
+    <h5><%= title %></h5>
+<form action="/spark" method="GET">
+	<button type=submit>start spark submit</button>
+ </form>
+<!--<form action="/yarnAll" method="GET">
+	<button type=submit>button1</button>
+ </form> -->
+<!--<form action="/uploads" method="post" enctype="multipart/form-data">
+      <input type="file" name="user_file" />
+      <input type="submit" value="전송" />
+</form>-->
+
+<br>
+<br>
+<select id="allState" name="allState" size="2">
+</select>
+<h4 id="appState"></h4>
+	<script>
+		$('#allState').change(function() {
+			var application_id = $(this).val()
+			$.ajax({
+				url: '/appState',
+				dataType: 'json',
+				type: 'GET',
+				data: {"id":application_id},
+				success:function(result) {
+					var elapsedTime = result.result.elapsedTime;
+					var sec_gap = elapsedTime /1000;
+					var min_gap = Math.floor(elapsedTime /1000/60);
+					var hour_gap = Math.floor(elapsedTime / 1000 / 60 /60);
+								
+					$('#appState').html("id : " +result.result.id +"<br>" + "elapsedTime : "+ hour_gap + "시" + min_gap+ "분" +sec_gap + "초" + "<br>" + "startedTime : "+ new Date(result.result.startedTime).toString() + "<br>" + "finishedTime : "+ new Date(result.result.finishedTime).toString()+ "<br>" + "state : " + result.result.state)
+				},	
+				error:function(error) {
+					console.log("error : " + error)	
+				}
+			})
+		})
+		$(document).ready(function() {
+			$('#allState').empty();
+			$.ajax({
+				url: '/yarnAllState',
+				dataType: 'json',
+				type: 'GET',
+				success:function(result) {
+					var stateLen = result.result.length;
+					$('#allState').attr("size", stateLen)
+					for(var i=0; i<stateLen; i++)
+	  				{
+						var id = result.result[i].id;
+						var name = result.result[i].name;
+//						var state = result.result[i].state;
+						var startedTime = new Date(result.result[i].startedTime).toString();
+						
+						$('<option value="'+ id +'">' + id + " " + name  + " " + startedTime + '</option>').appendTo('#allState');
+					}	
+				},
+				error:function(error) {
+					console.log("error : "+ error)
+				}
+			})
+		});
+
+	</script>
+  </body>
+</html>
