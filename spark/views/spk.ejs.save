@@ -1,0 +1,66 @@
+<!DOCTYPE html>                                            
+
+<html>
+
+  <head>
+
+    <title><%= title %></title>
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script>
+<!--    <script>
+    function applist(){
+
+      for(var count = 0 ; count < 4 ; count++){
+        var option = $("<option" + "value='")
+      }
+
+    }
+-->
+    var a = title
+
+    </script>
+
+  </head>
+
+  <body>
+
+    <h1>spk <%= title %></h1>
+
+    <p>upload app</p>
+
+    <p>result : <%= data %></p>
+    <p>applist : <%= applist %></p>
+
+    <form id='target' action='spk'>
+
+      <select name='spkfile' size='7'>
+         <option value='' selected>--select--</option>
+         <option value='wordcount'>wordcount.py</option>
+/*	 <%= for(int k=0; k< %><%=applist.length%><%=; k++){  %>
+		<option value= '<%=applist[k]%>' > <%=applist[k]%> </option>
+	 <%=}%>
+*/
+
+	 <%= for(int k=0; k<5; k++){ %>
+		<option value='wordcount'> <%=applist[k]%> </option>
+	 <%=}%>
+
+      </select>
+
+<!--      <input id='spkfile_input' name='spkfile' type='text' value='spark file name'>
+-->
+      <input id='textfile_input' name='textfile' type='text' value='text file name'>
+      <input id='username_input' name='username' type='text' value='user name'>
+
+      <input type='submit' value='submit'>
+
+    </form>
+
+    <h1><%= data %></h1>
+
+  </body>
+
+</html>
