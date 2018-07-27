@@ -13,10 +13,8 @@ text_file =  sc.textFile("hdfs:///choi/line.txt")
 counts = text_file.flatMap(lambda line: line.split(" ")) \
               .map(lambda word: (word, 1)) \
              .reduceByKey(lambda a, b: a + b)
-
 #print("word count : ", counts.collect())
 output = counts.collect()
-
 if args.type:
     if "odd"==args.type:
         print("odd")
