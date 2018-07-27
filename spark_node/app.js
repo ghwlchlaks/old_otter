@@ -7,6 +7,8 @@ var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var spk = require('./routes/spk');
+var uploader = require('./routes/uploader');
 
 var app = express();
 
@@ -21,16 +23,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// default
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
 app.use('/uploads', indexRouter)
+app.use('/yarnAllState', indexRouter)
+app.use('/appState', indexRouter)
+
+app.use('/spk', spk);
+app.use('/upload', uploader);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
-//app.use('/yarnAll', indexRouter)
-app.use('/yarnAllState', indexRouter)
-app.use('/appState', indexRouter)
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
