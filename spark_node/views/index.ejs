@@ -19,6 +19,7 @@
 
 <br>
 <br>
+<button id="refreshBtn">all state refresh button</button>
 <select id="allState" name="allState" size="2">
 </select>
 <h4 id="appState"></h4>
@@ -57,7 +58,13 @@
 				}
 			})
 		})
+		$('#refreshBtn').click(function(){
+			refreshState()
+		})
 		$(document).ready(function() {
+			refreshState()
+		});
+function refreshState() {
 			$('#allState').empty();
 			$.ajax({
 				url: '/yarnAllState',
@@ -68,20 +75,24 @@
 					$('#allState').attr("size", stateLen)
 					for(var i=0; i<stateLen; i++)
 	  				{
+
 						var id = result.result[i].id;
 						var name = result.result[i].name;
 //						var state = result.result[i].state;
 						var startedTime = new Date(result.result[i].startedTime).toString();
-						
-						$('<option value="'+ id +'">' + id + " " + name  + " " + startedTime + '</option>').appendTo('#allState');
+						if(result.result[i].state == "RUNNING")	{	
+							$('<option value="'+ id +'" style="background-color:yellow">' + id + " " + name  + " " + startedTime + '</option>').appendTo('#allState');
+						} else {		
+							$('<option value="'+ id +'" style="background-color:green">' + id + " " + name  + " " + startedTime + '</option>').appendTo('#allState');
+						}
 					}	
 				},
 				error:function(error) {
 					console.log("error : "+ error)
 				}
 			})
-		});
 
+}
 	</script>
   </body>
 </html>
