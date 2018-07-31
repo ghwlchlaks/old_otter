@@ -31,7 +31,8 @@ module.exports = {
 			}
 			else {
 				sendToSlack("해당 작업을 완료하였습니다. 결과값 : "+stdout)
-				res.render('spark', {status: true, result:stdout})
+				//res.render('spark', {status: true, result:stdout})
+				res.send({status: true, result: stdout})
 			}
 		})	
 	},

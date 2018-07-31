@@ -7,9 +7,8 @@
   </head>
   <body>
     <h5><%= title %></h5>
-<form action="/spark" method="GET">
-	<button type=submit>start spark submit</button>
- </form>
+<button id='startSparkBtn'>spark-submit</button>
+<h4 id="resultSparkTxt">result : </h4>
 <!--<form action="/yarnAll" method="GET">
 	<button type=submit>button1</button>
  </form> -->
@@ -24,6 +23,20 @@
 </select>
 <h4 id="appState"></h4>
 	<script>
+		$('#startSparkBtn').click(function() {
+			$.ajax({
+				url: '/spark',
+				type: 'GET',
+				dataType: 'json',
+				success: function(result) {
+					console.log(result)
+					$('#resultSparkTxt').html("result : "+result.result)
+				},
+				error: function(error)  {
+					console.log(error)
+				}
+			})
+		})
 		$('#allState').change(function() {
 			var application_id = $(this).val()
 			$.ajax({
