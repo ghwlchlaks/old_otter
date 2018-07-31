@@ -25,71 +25,73 @@
     <p>result :<script> document.write(data); </script></p>
     <p>applist : <%= applist %></p>
 
-    <form id='target' action='spk'>
-
+    <form id='select_spk' action='spk'>
       <select name='spkfile' size='6'>
         <option value='' selected>--select APP--</option>
-
 	<% for (var i =0 ; i<applist.length ; i++){ %>
 	<option value='<%= applist[i] %>'><%= applist[i] %></option>
 	<% } %>
-
       </select>
-
+    </form>
+    <form action='spk'>
       <select name='username' size='6' id='select_user'>
         <option value='' selected>--select user--</option>
-
 	<% for (var i =1 ; i<userlist.length ; i++){ %>
-	<option value='<%= userlist[i] %>' id ='select_user<%=i%>' ><%= userlist[i] %></option>
+	<option value='<%= userlist[i] %>' id='select_user<%=i%>' class='select_user'><%= userlist[i] %></option>
 	<% } %>
-
       </select>
-
+    </form>
+    <form id='select_file' action='spk'>
       <select name='textfile' size='6'>
 	<option value='' selected>--select file--</option>
-
 	<% for (var i =1 ; i<filelist.length ; i++){ %>
 	<option value='<%= filelist[i] %>'><%= filelist[i] %></option>
 	<% } %>
-
       </select>
+    </form>
 
       <input id='input_paramater' name='paramater' type='text' value='paramater'>
 
-      <script> document.write(data); </script>
-      <input type='submit' value='submit' id='submit_button'>
+      <input type='submit' value='submit'>
+      <input type='button' class='ajaxsend'>ajaxsend</button>
 
-    </form>
+      <p>위치추정:
+      <script>
+	document.write(' asd ')
+	document.getElementByid('select_user1').addEventListener('click', function(){
+	  var user = document.getElementByid('select_user1').value;
+	  sendAjax('http://127.0.0.1:3000/spk', user)
+	})
 
-    <h1><%= data %></h1>
+      </script>
+	<div id="result"></div>
+      </p>
+
+      <script>
+	$('#select_user1').click( function(){
+	  $('#result').html('');
+	  $.ajax({
+	    url: '/spk',
+	    dataType: 'json',
+	    type: 'POST',
+	    data:{'msg':$('#select_user1).val()},
+
+	    success:function(result) {
+		if ( result['result'] == true ) {
+		  $('#result').html(result['msg']};
+		}
+	    }
+	  });
+	})
+      </script>
+
     <h1>result : 
-    <script>
-	$(function(){
-                $('#select_user').click(function(e){
-                    e.preventDefault();
-                    console.log('select_link clicked');
-
-					var data = '<%=userlist[1]%>'	
-					$.ajax({
-						type: 'POST',
-						data: JSON.stringify(data),
-						contentType: 'application/json',
-						url: 'http://192.168.2.12:3000/spk',
-                        success: function(data) {
-                            console.log('success');
-                            console.log(JSON.stringify(data));
-                        }
-                    });
-                });				
-            });
-
-	var data = '<%= data %>'
+      <script>
 	var username = '<%= userlist[1] %>'
-	document.write('asd');
+	document.write(' asd ');
 	document.write(username);
-	document.write('<%= userlist[2] %>');
-	document.write(data);
-    </script>
+	document.write(' <%= userlist[2] %> ');
+      </script>
     </h1>
 
   </body>

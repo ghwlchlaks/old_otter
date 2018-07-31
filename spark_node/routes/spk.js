@@ -13,9 +13,12 @@ router.get('/', function(req, res, next) {
     console.log(req.query.textfile);
     console.log(req.query.username);
 
+    console.log(req.body.user);
+//    var responseData = {'user' : req.body.user}
+
     var submit = 'spark-submit ' + appRoute + req.query.spkfile + ' --file=' + req.query.textfile + ' --user=' + req.query.username + ' &'
 
-    exec('hdfs dfs -ls /' + req.query.username , function(err, stdout, stderr){
+    exec('hdfs dfs -ls /' + req.body.user , function(err, stdout, stderr){
 	//make file list to username
 	var fileList = stdout.split('\n')
 	for(var i=1 ; i<fileList.length-1 ; i++){
@@ -24,7 +27,6 @@ router.get('/', function(req, res, next) {
 	}
 
     exec('hdfs dfs -ls /', function(err, stdout, stderr){
-
 	//make user list
 	var userList = stdout.split('\n')	
 	for(var i=1 ; i<userList.length-1 ; i++){
@@ -43,7 +45,7 @@ router.get('/', function(req, res, next) {
 
 	  console.log('h1: ' + JSON.stringify(req.h1));
 
-          res.render('spk', { title: 'spark-submit', data: stdout, applist: files, userlist: userList, filelist: fileList });
+          res.render('spk', { title: 'spark-submit', data: stdout, applist: files, userlist: userList, filelist: fileList, msg: req.body.msg });
 
         });
       });
