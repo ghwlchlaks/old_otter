@@ -1,7 +1,23 @@
 const  exec = require('child_process').exec;
-const { RTMClient } = require('@slack/client');
+const Slack = require('slack-node');
+const webhookUri = "https://hooks.slack.com/services/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";
+const slack = new Slack();
+slack.setWebhook(webhookUri);
 
-const token = 'xoxp-401187969874-400943764356-401054501843-c365ef356f487899724751af19e46660'
+const sendToSlack = async(message) => {
+  slack.webhook({
+    channel: "#general", // 전송될 슬랙 채널
+    username: "webhookbot", //슬랙에 표시될 이름
+    text: message
+  }, function(err, response) {
+    if(!err) {
+                console.log("slack send success")
+        }
+    else {
+                console.log("slack send failed")
+        }
+  });
+}
 
 module.exports = {
 	command(req, res) {
@@ -14,20 +30,16 @@ module.exports = {
 				res.send({status: false, result:"error"})
 			}
 			else {
-				const rtm = new RTMClient(token);
-				rtm.start();
-				const conversationId = 'CBT1L5DD1';
-				rtm.sendMessage('해당 작업을 완료하였습니다. 결과값 '+stdout, conversationId).then((res)=> {
-					console.log("message sent success: ", res.ts)
-				}).catch(console.error);
-
-				res.render('spark', {status: true, result:stdout})
+				sendToSlack("해당 작업을 완료하였습니다. 결과값 : "+stdout)
+				//res.render('spark', {status: true, result:stdout})
+				res.send({status: true, result: stdout})
 			}
 		})	
 	},
 	AllYarnStates(req, res) {
 		//var exec_command = "yarn application -list -appStates ALL"
 		var exec_command = 'curl --compressed -H "Accept:application/json"  POST  "http://zest2:8088/ws/v1/cluster/apps"'
+		
 		child = exec(exec_command, function(error, stdout, stderr){
 			if(error !== null) {
 				console.log('exec error :' + error)
@@ -35,7 +47,10 @@ module.exports = {
 			}
 //			res.render('AllYarnStates', {status: true, result:stdout})
 			var data = JSON.parse(stdout).apps.app;
-//			console.log(data.apps.app)
+			data.sort(function(a,b){
+				return a.startedTime > b.startedTime ? -1 : a.startedTime < b.startedTime ? 1 : 0;
+			})
+			//console.log(data)
 			res.send({status:true, result:data})			
 		})
 	},
@@ -54,3 +69,4 @@ module.exports = {
 	
 	}
 }
+

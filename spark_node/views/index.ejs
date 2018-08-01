@@ -7,9 +7,8 @@
   </head>
   <body>
     <h5><%= title %></h5>
-<form action="/spark" method="GET">
-	<button type=submit>start spark submit</button>
- </form>
+<button id='startSparkBtn'>spark-submit</button>
+<h4 id="resultSparkTxt">result : </h4>
 <!--<form action="/yarnAll" method="GET">
 	<button type=submit>button1</button>
  </form> -->
@@ -24,6 +23,20 @@
 </select>
 <h4 id="appState"></h4>
 	<script>
+		$('#startSparkBtn').click(function() {
+			$.ajax({
+				url: '/spark',
+				type: 'GET',
+				dataType: 'json',
+				success: function(result) {
+					console.log(result)
+					$('#resultSparkTxt').html("result : "+result.result)
+				},
+				error: function(error)  {
+					console.log(error)
+				}
+			})
+		})
 		$('#allState').change(function() {
 			var application_id = $(this).val()
 			$.ajax({
@@ -36,8 +49,8 @@
 					var sec_gap = elapsedTime /1000;
 					var min_gap = Math.floor(elapsedTime /1000/60);
 					var hour_gap = Math.floor(elapsedTime / 1000 / 60 /60);
-								
-					$('#appState').html("id : " +result.result.id +"<br>" + "elapsedTime : "+ hour_gap + "시" + min_gap+ "분" +sec_gap + "초" + "<br>" + "startedTime : "+ new Date(result.result.startedTime).toString() + "<br>" + "finishedTime : "+ new Date(result.result.finishedTime).toString()+ "<br>" + "state : " + result.result.state)
+					var name = result.result.name;			
+					$('#appState').html("id : " +result.result.id +"<br>" +"name : " +result.result.name +"<br>"+ "elapsedTime : "+ hour_gap + "시" + min_gap+ "분" +sec_gap + "초" + "<br>" + "startedTime : "+ new Date(result.result.startedTime).toString() + "<br>" + "finishedTime : "+ new Date(result.result.finishedTime).toString()+ "<br>" + "state : " + result.result.state)
 				},	
 				error:function(error) {
 					console.log("error : " + error)	
@@ -45,30 +58,64 @@
 			})
 		})
 		$(document).ready(function() {
-			$('#allState').empty();
-			$.ajax({
+			setInterval( allRefreshState ,2000);
+		});
+
+var allStateLen = null
+function allRefreshState() {	
+	$.ajax({
 				url: '/yarnAllState',
 				dataType: 'json',
 				type: 'GET',
 				success:function(result) {
 					var stateLen = result.result.length;
 					$('#allState').attr("size", stateLen)
-					for(var i=0; i<stateLen; i++)
-	  				{
-						var id = result.result[i].id;
-						var name = result.result[i].name;
-//						var state = result.result[i].state;
-						var startedTime = new Date(result.result[i].startedTime).toString();
-						
-						$('<option value="'+ id +'">' + id + " " + name  + " " + startedTime + '</option>').appendTo('#allState');
-					}	
+					if(allStateLen != stateLen) {
+						$('#allState').empty();
+						for(var i=0; i<stateLen; i++)
+	  					{
+							var id = result.result[i].id;
+							var name = result.result[i].name;
+							var state = result.result[i].state;
+							var startedTime = new Date(result.result[i].startedTime).toString();
+							if(result.result[i].state == "RUNNING")	{	
+								$('<option id="'+id+'" class="'+state+'" value="'+ id +'" style="background-color:yellow">' + id + '</option>').appendTo('#allState');
+							} else {		
+								$('<option id="'+id+'" class="'+state+'" value="'+ id +'" style="background-color:gray">' + id +  '</option>').appendTo('#allState');
+							}
+						}
+						allStateLen = stateLen;
+					}
+					else {
+						for(var i=0; i<stateLen; i++) {
+							var id = result.result[i].id;
+							var name = result.result[i].name;
+							var currentState = result.result[i].state;
+							var beforeClass = $('#'+id).attr('class')
+							var startedTime = new Date(result.result[i].startedTime).toString();
+							
+							if(beforeClass != currentState ) {
+								$('#'+id).removeClass(beforeClass);
+								$('#'+id).addClass(currentState);
+								$('#'+id).html(id)
+								//console.log(currentState)
+								if(currentState == "ACCEPTED") {
+									$('#'+id).attr('style','background-color:blue');
+								} else if(currentState == "RUNNING") {
+									$('#'+id).attr('style','background-color:yellow');
+								} else if(currentState == "FINISHED") {
+									$('#'+id).attr('style','background-color:gray');
+								}
+							}
+						}
+					}
+					
 				},
 				error:function(error) {
 					console.log("error : "+ error)
 				}
 			})
-		});
-
+}
 	</script>
   </body>
 </html>
