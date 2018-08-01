@@ -14,17 +14,6 @@ router.get('/', function(req, res, next) {
     console.log(req.query.username);
 
     console.log(req.body.user);
-//    var responseData = {'user' : req.body.user}
-
-    var submit = 'spark-submit ' + appRoute + req.query.spkfile + ' --file=' + req.query.textfile + ' --user=' + req.query.username + ' &'
-
-    exec('hdfs dfs -ls /' + req.body.user , function(err, stdout, stderr){
-	//make file list to username
-	var fileList = stdout.split('\n')
-	for(var i=1 ; i<fileList.length-1 ; i++){
-		fileList[i] = fileList[i].split('/'+req.query.username+'/')[1]
-		console.log(fileList[i])
-	}
 
     exec('hdfs dfs -ls /', function(err, stdout, stderr){
 	//make user list
@@ -35,21 +24,34 @@ router.get('/', function(req, res, next) {
 	}
 
       fs.readdir(appFolder, function (err, files){	
-        exec(submit, function (err, stdout, stderr) {
 
+          res.render('spk', {applist: files, userlist: userList});
 
-
-
-          console.log(stdout);
-          console.log(stderr);
-
-	  console.log('h1: ' + JSON.stringify(req.h1));
-
-          res.render('spk', { title: 'spark-submit', data: stdout, applist: files, userlist: userList, filelist: fileList, msg: req.body.msg });
-
-        });
       });
     });
+});
+
+router.post('/', function(req, res, next){
+
+    var submit = 'spark-submit ' + appRoute + req.body.APP + ' --file=' + req.body.data + ' --user=' + req.body.user + ' ' + req.body.paramater
+    console.log(submit);
+
+    exec('hdfs dfs -ls /' + req.body.user , function(err, stdout, stderr){
+	//make file list to username
+	var fileList = stdout.split('\n')
+	for(var i=1 ; i<fileList.length-1 ; i++){
+		fileList[i] = fileList[i].split('/'+req.body.user+'/')[1]
+		console.log(fileList[i])
+	}
+
+        exec(submit, function (err, stdout, stderr) {
+
+	  console.log(submit);
+
+	  res.send({result : stdout , datalist : fileList});
+
+        });
+
     });
 
 });
