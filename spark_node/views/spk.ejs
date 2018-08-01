@@ -4,93 +4,90 @@
 
   <head>
 
-    <title><%= title %></title>
+    <title>Spark</title>
 
     <link rel='stylesheet' href='/stylesheets/style.css' />
 
-    <script src="//code.jquery.com/jquery.min.js"></script>
-
-    <script>
-    </script>
-
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
 
   </head>
 
   <body>
 
-    <h1>spk <%= title %></h1>
+    <h1>Spark</h1>
 
-    <p>upload app</p>
-
-    <p>result :<script> document.write(data); </script></p>
-    <p>applist : <%= applist %></p>
-
-    <form id='target' action='spk'>
-
-      <select name='spkfile' size='6'>
-        <option value='' selected>--select APP--</option>
-
+    <p>
+    <form id='' action='spk'>
+      <select name='spkfile' size='6' id='select_APP'>
+        <option value='' selected>--select Spark APP--</option>
 	<% for (var i =0 ; i<applist.length ; i++){ %>
 	<option value='<%= applist[i] %>'><%= applist[i] %></option>
 	<% } %>
-
       </select>
 
-      <select name='username' size='6' id='select_user'>
-        <option value='' selected>--select user--</option>
-
+      <select name='username' size='6' id='select_user' class='select_user'>
+        <option value='' selected>--select user folder--</option>
 	<% for (var i =1 ; i<userlist.length ; i++){ %>
-	<option value='<%= userlist[i] %>' id ='select_user<%=i%>' ><%= userlist[i] %></option>
+	<option value='<%= userlist[i] %>' id='select_user<%=i%>' class='select_user<%=i%>'><%= userlist[i] %></option>
 	<% } %>
-
       </select>
 
-      <select name='textfile' size='6'>
-	<option value='' selected>--select file--</option>
-
-	<% for (var i =1 ; i<filelist.length ; i++){ %>
-	<option value='<%= filelist[i] %>'><%= filelist[i] %></option>
-	<% } %>
-
+      <select name='textfile' size='6' id='select_data'>
+	<option value='' selected>--select data file--</option>
       </select>
+    </p>
 
-      <input id='input_paramater' name='paramater' type='text' value='paramater'>
-
-      <script> document.write(data); </script>
-      <input type='submit' value='submit' id='submit_button'>
+      <input id='paramater' name='paramater' type='text' placeholder='input paramater'>
 
     </form>
 
-    <h1><%= data %></h1>
-    <h1>result : 
-    <script>
-	$(function(){
-                $('#select_user').click(function(e){
-                    e.preventDefault();
-                    console.log('select_link clicked');
+      <button class="submit">전송하기</button>
 
-					var data = '<%=userlist[1]%>'	
-					$.ajax({
-						type: 'POST',
-						data: JSON.stringify(data),
-						contentType: 'application/json',
-						url: 'http://192.168.2.12:3000/spk',
-                        success: function(data) {
-                            console.log('success');
-                            console.log(JSON.stringify(data));
-                        }
-                    });
-                });				
-            });
+      <div class="result">결과</div>
 
-	var data = '<%= data %>'
-	var username = '<%= userlist[1] %>'
-	document.write('asd');
-	document.write(username);
-	document.write('<%= userlist[2] %>');
-	document.write(data);
-    </script>
-    </h1>
+  <script>
+    $('.submit').click( function() {
+      $('.result').html('처리중');
+      $.ajax({
+        url: '/spk',
+        method: 'post',
+        data: {
+	'APP' : $('#select_APP option:selected').val(),
+	'user' : $('#select_user option:selected').val(),
+	'data' : $('#select_data option:selected').val(),
+	'paramater' : $('#paramater').val()
+	},
+        dataType: 'json',
+        success: function(result) {
+          if(result){
+            $('.result').html(result.result);
+          }
+        }
+      });
+    });
+  </script>
+
+  <script>
+    $('#select_user').click( function() {
+      $.ajax({
+        url: '/spk',
+        method: 'post',
+        data: {
+	'user' : $('#select_user option:selected').val()
+	},
+        dataType: 'json',
+        success: function(result) {
+          if(result){
+
+	    $('#select_data').empty();
+	    for(var i=1 ; i<result.datalist.length ; i++){
+              $('#select_data').append('<option value='+result.datalist[i]+'>'+result.datalist[i]+'</option>');
+	    }
+          }
+        }
+      });
+    });
+  </script>
 
   </body>
 
