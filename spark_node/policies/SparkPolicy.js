@@ -39,6 +39,7 @@ module.exports = {
 	AllYarnStates(req, res) {
 		//var exec_command = "yarn application -list -appStates ALL"
 		var exec_command = 'curl --compressed -H "Accept:application/json"  POST  "http://zest2:8088/ws/v1/cluster/apps"'
+		
 		child = exec(exec_command, function(error, stdout, stderr){
 			if(error !== null) {
 				console.log('exec error :' + error)
@@ -46,7 +47,10 @@ module.exports = {
 			}
 //			res.render('AllYarnStates', {status: true, result:stdout})
 			var data = JSON.parse(stdout).apps.app;
-//			console.log(data.apps.app)
+			data.sort(function(a,b){
+				return a.startedTime > b.startedTime ? -1 : a.startedTime < b.startedTime ? 1 : 0;
+			})
+			//console.log(data)
 			res.send({status:true, result:data})			
 		})
 	},
@@ -65,3 +69,4 @@ module.exports = {
 	
 	}
 }
+

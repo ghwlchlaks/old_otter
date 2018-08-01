@@ -19,7 +19,6 @@
 
 <br>
 <br>
-<button id="refreshBtn">all state refresh button</button>
 <select id="allState" name="allState" size="2">
 </select>
 <h4 id="appState"></h4>
@@ -50,48 +49,72 @@
 					var sec_gap = elapsedTime /1000;
 					var min_gap = Math.floor(elapsedTime /1000/60);
 					var hour_gap = Math.floor(elapsedTime / 1000 / 60 /60);
-								
-					$('#appState').html("id : " +result.result.id +"<br>" + "elapsedTime : "+ hour_gap + "시" + min_gap+ "분" +sec_gap + "초" + "<br>" + "startedTime : "+ new Date(result.result.startedTime).toString() + "<br>" + "finishedTime : "+ new Date(result.result.finishedTime).toString()+ "<br>" + "state : " + result.result.state)
+					var name = result.result.name;			
+					$('#appState').html("id : " +result.result.id +"<br>" +"name : " +result.result.name +"<br>"+ "elapsedTime : "+ hour_gap + "시" + min_gap+ "분" +sec_gap + "초" + "<br>" + "startedTime : "+ new Date(result.result.startedTime).toString() + "<br>" + "finishedTime : "+ new Date(result.result.finishedTime).toString()+ "<br>" + "state : " + result.result.state)
 				},	
 				error:function(error) {
 					console.log("error : " + error)	
 				}
 			})
 		})
-		$('#refreshBtn').click(function(){
-			refreshState()
-		})
 		$(document).ready(function() {
-			refreshState()
+			setInterval( allRefreshState ,2000);
 		});
-function refreshState() {
-			$('#allState').empty();
-			$.ajax({
+
+var allStateLen = null
+function allRefreshState() {	
+	$.ajax({
 				url: '/yarnAllState',
 				dataType: 'json',
 				type: 'GET',
 				success:function(result) {
 					var stateLen = result.result.length;
 					$('#allState').attr("size", stateLen)
-					for(var i=0; i<stateLen; i++)
-	  				{
-
-						var id = result.result[i].id;
-						var name = result.result[i].name;
-//						var state = result.result[i].state;
-						var startedTime = new Date(result.result[i].startedTime).toString();
-						if(result.result[i].state == "RUNNING")	{	
-							$('<option value="'+ id +'" style="background-color:yellow">' + id + " " + name  + " " + startedTime + '</option>').appendTo('#allState');
-						} else {		
-							$('<option value="'+ id +'" style="background-color:green">' + id + " " + name  + " " + startedTime + '</option>').appendTo('#allState');
+					if(allStateLen != stateLen) {
+						$('#allState').empty();
+						for(var i=0; i<stateLen; i++)
+	  					{
+							var id = result.result[i].id;
+							var name = result.result[i].name;
+							var state = result.result[i].state;
+							var startedTime = new Date(result.result[i].startedTime).toString();
+							if(result.result[i].state == "RUNNING")	{	
+								$('<option id="'+id+'" class="'+state+'" value="'+ id +'" style="background-color:yellow">' + id + '</option>').appendTo('#allState');
+							} else {		
+								$('<option id="'+id+'" class="'+state+'" value="'+ id +'" style="background-color:gray">' + id +  '</option>').appendTo('#allState');
+							}
 						}
-					}	
+						allStateLen = stateLen;
+					}
+					else {
+						for(var i=0; i<stateLen; i++) {
+							var id = result.result[i].id;
+							var name = result.result[i].name;
+							var currentState = result.result[i].state;
+							var beforeClass = $('#'+id).attr('class')
+							var startedTime = new Date(result.result[i].startedTime).toString();
+							
+							if(beforeClass != currentState ) {
+								$('#'+id).removeClass(beforeClass);
+								$('#'+id).addClass(currentState);
+								$('#'+id).html(id)
+								//console.log(currentState)
+								if(currentState == "ACCEPTED") {
+									$('#'+id).attr('style','background-color:blue');
+								} else if(currentState == "RUNNING") {
+									$('#'+id).attr('style','background-color:yellow');
+								} else if(currentState == "FINISHED") {
+									$('#'+id).attr('style','background-color:gray');
+								}
+							}
+						}
+					}
+					
 				},
 				error:function(error) {
 					console.log("error : "+ error)
 				}
 			})
-
 }
 	</script>
   </body>
