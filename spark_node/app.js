@@ -8,8 +8,8 @@ var bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var spk = require('./routes/spk');
-var uploader = require('./routes/uploader');
+//var spk = require('./routes/spk');
+//var uploader = require('./routes/uploader');
 
 var app = express();
 
@@ -33,8 +33,8 @@ app.use('/uploads', indexRouter)
 app.use('/yarnAllState', indexRouter)
 app.use('/appState', indexRouter)
 
-app.use('/spk', spk);
-app.use('/upload', uploader);
+app.use('/spk', indexRouter);
+//app.use('/upload', uploader);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

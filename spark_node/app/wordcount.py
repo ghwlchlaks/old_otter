@@ -4,6 +4,7 @@ import argparse
 #spark context
 sc = SparkContext()
 
+print(sc.applicationId)
 #make & receved outer argument
 parser = argparse.ArgumentParser()
 
