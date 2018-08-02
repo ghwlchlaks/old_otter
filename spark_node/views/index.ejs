@@ -17,10 +17,9 @@
       <select name='textfile' size='6' id='select_data'>
       </select>
     </p>
-
       <input id='paramater' name='paramater' type='text' placeholder='input paramater'>
-
     </form>
+
 
     <button class="submit">spark-submit</button>
 
@@ -65,11 +64,25 @@
       <input type="submit" value="전송" />
 </form>-->
 
+      <button class="submit">전송하기</button>
+      <div class="result">결과</div>
+
+<!-- <button id='startSparkBtn'>spark-submit</button>
+<h4 id="resultSparkTxt">result : </h4> -->
+
+
 <br>
 <br>
 <select id="allState" name="allState" size="2">
 </select>
-<h4 id="appState"></h4>
+<div class="appState">
+	<h4 id="id">id : </h4>
+	<h4 id="name">name : </h4>
+	<h4 id="elapsedTime">elapsedTime : </h4>
+	<h4 id="startedTime">startedTime : </h4>
+	<h4 id="finishedTime">finishedTime : </h4>
+	<h4 id="state">state : </h4>
+</div>
 	<script>
 		$('#startSparkBtn').click(function() {
 			$.ajax({
@@ -98,7 +111,13 @@
 					var min_gap = Math.floor(elapsedTime /1000/60);
 					var hour_gap = Math.floor(elapsedTime / 1000 / 60 /60);
 					var name = result.result.name;			
-					$('#appState').html("id : " +result.result.id +"<br>" +"name : " +result.result.name +"<br>"+ "elapsedTime : "+ hour_gap + "시" + min_gap+ "분" +sec_gap + "초" + "<br>" + "startedTime : "+ new Date(result.result.startedTime).toString() + "<br>" + "finishedTime : "+ new Date(result.result.finishedTime).toString()+ "<br>" + "state : " + result.result.state)
+
+					$('#id').html("id : "+result.result.id)
+					$('#name').html("name : "+result.result.name)
+					$('#elapsedTime').html("elapsedTime : "+  hour_gap + "시" + min_gap+ "분" +sec_gap + "초")
+					$('#startedTime').html("startedTime : "+new Date(result.result.startedTime).toString())
+					$('#finishedTime').html("finishedTime : "+ new Date(result.result.finishedTime).toString())
+					$('#state').html("state : " + result.result.state)
 				},	
 				error:function(error) {
 					console.log("error : " + error)	
@@ -106,6 +125,7 @@
 			})
 		})
 		$(document).ready(function() {
+			allRefreshState();
 			setInterval( allRefreshState ,2000);
 		});
 
@@ -146,18 +166,24 @@ function allRefreshState() {
 								$('#'+id).removeClass(beforeClass);
 								$('#'+id).addClass(currentState);
 								$('#'+id).html(id)
-								//console.log(currentState)
+								var state = ""
+								console.log(currentState)
 								if(currentState == "ACCEPTED") {
+									state = "ACCEPTED"
 									$('#'+id).attr('style','background-color:blue');
 								} else if(currentState == "RUNNING") {
+									state = "RUNNING"
 									$('#'+id).attr('style','background-color:yellow');
 								} else if(currentState == "FINISHED") {
+									state = "FINISHED"
 									$('#'+id).attr('style','background-color:gray');
+								}
+								if($('#allState option:selected').attr('id') == id) {
+									$('#state').html("state : "+state)
 								}
 							}
 						}
-					}
-					
+					}	
 				},
 				error:function(error) {
 					console.log("error : "+ error)

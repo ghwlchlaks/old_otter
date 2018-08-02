@@ -5,17 +5,17 @@ const slack = new Slack();
 const fs = require('fs')
 slack.setWebhook(webhookUri);
 
-const sendToSlack = (message) => {
+const  sendToSlack = (message) => {
   slack.webhook({
     channel: "#general", // 전송될 슬랙 채널
     username: "webhookbot", //슬랙에 표시될 이름
     text: message
   }, function(err, response) {
     if(!err) {
-                console.log("slack send success")
+            console.log("slack send success")
         }
     else {
-                console.log("slack send failed")
+            console.log("slack send failed")
         }
   });
 }
