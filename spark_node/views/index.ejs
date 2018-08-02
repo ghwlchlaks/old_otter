@@ -25,51 +25,9 @@
 
     <div class="result">결과</div>
 
-    <p>upload spark app</p>
-
-    <form id="FILE_FORM" method='post' enctype='multipart/form-data' action=''>
-      <input type='file' id='FILE_TAG' name='FILE_TAG'>
-    </form>
-    <button id='file-upload'>파일전송</button>
-
-<script>
-  $('#file-upload').click( function() {
-//    var form = $('#FILE_FORM')[0];
-//    var formData = new Formdata(form);
-//    formData.append('fileObj', $('#FILE_TAG')[0].file[0]);
-
-    $.ajax({
-      url: '',
-	processData: false,
-	contentType: multipart/form-data,
-	data: $('#FILE_TAG')[0].file[0],
-	type: 'POST',
-	sucess: function(result){
-	  alert(result+'업로드 성공');
-	}
-    });
-  }
-</script>
-
-
-<!--//////////////////////////////////////////////-->
-<!--
-<button id='startSparkBtn'>spark-submit</button>
-<h4 id="resultSparkTxt">result : </h4>
-<form action="/yarnAll" method="GET">
-	<button type=submit>button1</button>
- </form> -->
-<!--<form action="/uploads" method="post" enctype="multipart/form-data">
-      <input type="file" name="user_file" />
-      <input type="submit" value="전송" />
-</form>-->
-
-      <button class="submit">전송하기</button>
-      <div class="result">결과</div>
-
+   
 <!-- <button id='startSparkBtn'>spark-submit</button>
 <h4 id="resultSparkTxt">result : </h4> -->
-
 
 <br>
 <br>
@@ -83,7 +41,7 @@
 	<h4 id="finishedTime">finishedTime : </h4>
 	<h4 id="state">state : </h4>
 </div>
-	<script>
+<script>
 		$('#startSparkBtn').click(function() {
 			$.ajax({
 				url: '/spark',
@@ -191,8 +149,6 @@ function allRefreshState() {
 			})
 }
 
-
-//////////////////////////////////////////////////////
 $('.submit').click( function() {
       $('.result').html('처리중');
       $.ajax({
