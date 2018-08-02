@@ -1,10 +1,11 @@
-const  exec = require('child_process').exec;
+const exec = require('child_process').exec;
 const Slack = require('slack-node');
 const webhookUri = "https://hooks.slack.com/services/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";
 const slack = new Slack();
+const fs = require('fs')
 slack.setWebhook(webhookUri);
 
-const sendToSlack = async(message) => {
+const sendToSlack = (message) => {
   slack.webhook({
     channel: "#general", // 전송될 슬랙 채널
     username: "webhookbot", //슬랙에 표시될 이름
@@ -67,6 +68,36 @@ module.exports = {
                         res.send({status:true, result:data})
                 })
 	
+	},
+	sparkSubmit(req, res) {
+		var submit = 'spark-submit '+'app/'+req.body.APP+' --file='+req.body.data+' --user='+req.body.user+' '+req.body.paramater
+		exec(submit, function (err, stdout, stderr) {
+
+			console.log(submit);
+			sendToSlack("해당 작업을 완료하였습니다. 결과값 : "+stdout)
+			res.send({result : stdout});
+		});
+	},
+	makeList(req, res) {
+		exec('hdfs dfs -ls /' + req.body.user , function(err, stdout, stderr){
+			//make file list to username
+			var dataList = stdout.split('\n')
+			for(var i=1 ; i<dataList.length-1 ; i++){
+                		dataList[i] = dataList[i].split('/'+req.body.user+'/')[1]
+                		console.log(dataList[i])
+        		}
+			exec('hdfs dfs -ls /', function(err, stdout, stderr){
+			        //make user list
+			        var userList = stdout.split('\n')
+			        for(var i=1 ; i<userList.length-1 ; i++){
+			                userList[i] = userList[i].split('/')[1]
+			                console.log(userList[i])
+				        }
+				fs.readdir('./app', function (err, files){
+					res.send({applist: files, userlist: userList, datalist : dataList});
+				});
+			});
+		});
 	}
 }
 
