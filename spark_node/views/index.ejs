@@ -1210,15 +1210,25 @@ $('.submit').click( function() {
       <select name="textfile" size="6" id="select_data">
       </select>
     </p>
+
       <input id="paramater" name="paramater" type="text" placeholder="input paramater">
     
+
+
+      <input id='paramater' name='paramater' type='text' placeholder='input paramater'>
+    </form>
+		<h3 id="appHelp">[사용방법]</h3>
 
 
     <button class="submit">spark-submit</button>
 
     <div class="result">결과</div>
 
-   
+    <form id='fileForm' method='post' enctype='multipart/form-data' action='/upload'>
+	<input type='file' id='fileInput' name='fileInput'>
+    </form>
+    <button class='upload'>APP UPLOAD</button>
+
 <!-- <button id='startSparkBtn'>spark-submit</button>
 <h4 id="resultSparkTxt">result : </h4> -->
 
@@ -1389,7 +1399,7 @@ $('.submit').click( function() {
         dataType: 'json',
         success: function(result) {
           if(result){
-	    for(var i=1 ; i<result.applist.length ; i++){
+	    for(var i=0 ; i<result.applist.length ; i++){
               $('#select_APP').append('<option value='+result.applist[i]+'>'+result.applist[i]+'</option>');
 	    }
 	    for(var i=1 ; i<result.userlist.length ; i++){
@@ -1398,7 +1408,51 @@ $('.submit').click( function() {
 	  }
 	}
       });
+		});
+		$('#select_APP').change(function() {
+			var appName = $(this).val()
+			$.ajax({
+				url:'appHelp',
+				method: 'GET',
+				dataType:'json',
+				data: {"name" :appName},
+				success: function(result) {
+					var help = result.result.split("'''")[1]
+					var helpParse = help.split("\n")
+					data = ""
+					for (var i=1; i<helpParse.length; i++) {
+						data+= helpParse[i] + "<br>"
+					}
+					$('#appHelp').html(data)
+				},
+				error: function(error) {
+					console.log("error" + error)
+				}
+			})
+		})
     });
+
+    $('.upload').click(function(){
+	var form = $('#fileForm')[0];
+	var formData = new FormData(form);
+
+	$.ajax({
+	  url:'/upload',
+	  processData: false,
+	  contentType: false,
+	  data : formData,
+	  type: 'POST',
+	  success: function(result){
+
+		$('#select_APP').empty();
+
+		for(var i=0 ; i<result.applist.length ; i++){
+		  $('#select_APP').append('<option value='+result.applist[i]+'>'+result.applist[i]+'</option>');
+		}
+	  }
+	});
+    });
+
 	</script>
   
 

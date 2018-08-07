@@ -52,12 +52,16 @@ app.use('/appState', indexRouter)
 app.use('/spk', indexRouter);
 //app.use('/upload', uploader);
 
+
 //css&js
 app.use('/css', express.static(__dirname +'/node_modules/bootstrap/dist/css'));
 app.use('/js', express.static(__dirname +'/node_modules/bootstrap/dist/js'));
 app.use('/vendor', express.static(__dirname +'/node_modules/bootstrap/vendor'));
 app.use('/data', express.static(__dirname +'/node_modules/bootstrap/data'));
 app.use('/dist', express.static(__dirname +'/node_modules/bootstrap/dist'));
+
+
+app.use('/appHelp', indexRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
