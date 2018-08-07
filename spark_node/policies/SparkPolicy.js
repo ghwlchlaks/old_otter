@@ -100,6 +100,21 @@ module.exports = {
 			});
 		});
 	},
+
+	appHelp(req, res) {
+		var appName = req.query.name
+		console.log(appName)
+		var submit = 'cat app/'+appName
+		exec(submit, function(error, stdout, stderr) {
+			if(error !== null) {
+				console.log('exec error :' + error)
+				res.send({status: false, result:"error"})
+			}
+			
+			res.send({status:true ,result: stdout})
+		});
+		
+
 	upload(req, res){
 		var form = new multiparty.Form({
 			fileNames: 'uploadtest.txt',
@@ -122,6 +137,7 @@ module.exports = {
 				res.send({applist: files})
 			});
         	});
+
 	}
 }
 

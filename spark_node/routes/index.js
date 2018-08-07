@@ -19,5 +19,7 @@ router.get('/spark',SparkPolicy.command)
 router.get('/yarnAllState', SparkPolicy.AllYarnStates)
 router.get('/appState', SparkPolicy.appState)
 
+router.get('/appHelp',SparkPolicy.appHelp)
 router.post('/upload',SparkPolicy.upload)
+
 module.exports = router;

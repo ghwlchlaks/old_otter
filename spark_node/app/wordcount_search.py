@@ -1,3 +1,8 @@
+'''
+[사용방법]
+--word [word]
+'''
+
 from pyspark import SparkContext
 import argparse
 

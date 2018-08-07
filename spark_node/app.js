@@ -35,7 +35,7 @@ app.use('/appState', indexRouter)
 
 app.use('/spk', indexRouter);
 //app.use('/upload', uploader);
-
+app.use('/appHelp', indexRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
