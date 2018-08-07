@@ -1,3 +1,7 @@
+''' 
+[사용방법]
+test입니다.
+'''
 from pyspark import SparkContext
 import argparse
 
