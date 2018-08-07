@@ -112,9 +112,8 @@ module.exports = {
 			}
 			
 			res.send({status:true ,result: stdout})
-		});
-		
-
+		});	
+	},
 	upload(req, res){
 		var form = new multiparty.Form({
 			fileNames: 'uploadtest.txt',
