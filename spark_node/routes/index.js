@@ -3,18 +3,6 @@ var router = express.Router();
 var exec = require("child_process").exec;
 var multer = require('multer')
 var fs = require('fs')
-var storage = multer.diskStorage({
-	destination: function(req, file, cb) {
-	// file type 
-		console.log(file.originalname)
-		cb(null, 'app/')
-		
-	},
-	filename: function(req, file, cb) {
-		cb(null, file.originalname+'-'+ Date.now())
-	}
-});
-var upload = multer({storage: storage})
 
 
 const SparkPolicy = require('../policies/SparkPolicy')
@@ -31,7 +19,5 @@ router.get('/spark',SparkPolicy.command)
 router.get('/yarnAllState', SparkPolicy.AllYarnStates)
 router.get('/appState', SparkPolicy.appState)
 
-router.post('/uploads',upload.single(),function(req, res, next){
-
-})
+router.post('/upload',SparkPolicy.upload)
 module.exports = router;
