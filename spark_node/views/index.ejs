@@ -25,7 +25,11 @@
 
     <div class="result">결과</div>
 
-   
+    <form id='fileForm' method='post' enctype='multipart/form-data' action='/upload'>
+	<input type='file' id='fileInput' name='fileInput'>
+    </form>
+    <button class='upload'>APP UPLOAD</button>
+
 <!-- <button id='startSparkBtn'>spark-submit</button>
 <h4 id="resultSparkTxt">result : </h4> -->
 
@@ -197,7 +201,7 @@ $('.submit').click( function() {
         dataType: 'json',
         success: function(result) {
           if(result){
-	    for(var i=1 ; i<result.applist.length ; i++){
+	    for(var i=0 ; i<result.applist.length ; i++){
               $('#select_APP').append('<option value='+result.applist[i]+'>'+result.applist[i]+'</option>');
 	    }
 	    for(var i=1 ; i<result.userlist.length ; i++){
@@ -228,6 +232,29 @@ $('.submit').click( function() {
 				}
 			})
 		})
+    });
+
+    $('.upload').click(function(){
+	var form = $('#fileForm')[0];
+	var formData = new FormData(form);
+
+	$.ajax({
+	  url:'/upload',
+	  processData: false,
+	  contentType: false,
+	  data : formData,
+	  type: 'POST',
+	  success: function(result){
+
+		$('#select_APP').empty();
+
+		for(var i=0 ; i<result.applist.length ; i++){
+		  $('#select_APP').append('<option value='+result.applist[i]+'>'+result.applist[i]+'</option>');
+		}
+	  }
+	});
+    });
+
 	</script>
   </body>
 </html>
