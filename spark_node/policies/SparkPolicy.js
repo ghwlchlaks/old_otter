@@ -3,6 +3,7 @@ const Slack = require('slack-node');
 const webhookUri = "https://hooks.slack.com/services/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";
 const slack = new Slack();
 const fs = require('fs')
+const multiparty = require('multiparty');
 slack.setWebhook(webhookUri);
 
 const  sendToSlack = (message) => {
@@ -98,6 +99,29 @@ module.exports = {
 				});
 			});
 		});
+	},
+	upload(req, res){
+		var form = new multiparty.Form({
+			fileNames: 'uploadtest.txt',
+			autoFiles: false,
+			uploadDir: 'app/',
+//	                maxFilesSize: 1024 * 1024 * 5
+		});
+		form.parse(req, function(error, fields, files){
+			var path = files.fileInput[0].path
+			var originalName = files.fileInput[0].originalFilename
+			console.log(path);
+			console.log(originalName);
+
+			//rename upload file
+			fs.rename(path, 'app/'+originalName, function (err){
+				console.log('renamed complete');
+			});
+//			console.log('filename :'+files.fileInput[0].path)
+			fs.readdir('./app', function (err, files){
+				res.send({applist: files})
+			});
+        	});
 	}
 }
 
