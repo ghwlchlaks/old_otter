@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>NILAB</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="/vendor/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+</head>
+
+<body>
+<div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/outbound">Result</a>
+            </div>
+            <!-- /.navbar-header -->
+
+
+           <div class="navbar-default sidebar" role="navigation">
+                <!-- <div class="sidebar-nav navbar-collapse collapse">
+                  
+                         
+                        <li>
+                            <a href="/"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        </li>
+                        <li class="">
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse" aria-expanded="false" style="height: 0px;">
+                                <li>
+                                    <a href="flot.html">Flot Charts</a>
+                                </li>
+                                <li>
+                                    <a href="morris.html">Morris.js Charts</a>
+                                </li>
+                            </ul> 
+                     
+                        </li>
+                        <li>
+                            <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
+                        </li>
+                        <li>
+                            <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i> UI Elements<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse">
+                                <li>
+                                    <a href="panels-wells.html">Panels and Wells</a>
+                                </li>
+                                <li>
+                                    <a href="buttons.html">Buttons</a>
+                                </li>
+                                <li>
+                                    <a href="notifications.html">Notifications</a>
+                                </li>
+                                <li>
+                                    <a href="typography.html">Typography</a>
+                                </li>
+                                <li>
+                                    <a href="icons.html"> Icons</a>
+                                </li>
+                                <li>
+                                    <a href="grid.html">Grid</a>
+                                </li>
+                            </ul>
+                     
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse">
+                                <li>
+                                    <a href="#">Second Level Item</a>
+                                </li>
+                                <li>
+                                    <a href="#">Second Level Item</a>
+                                </li>
+                                <li>
+                                    <a href="#">Third Level <span class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level collapse">
+                                        <li>
+                                            <a href="#">Third Level Item</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Third Level Item</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Third Level Item</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Third Level Item</a>
+                                        </li>
+                                    </ul>
+                     
+                                </li>
+                            </ul>
+                     
+                        </li>
+                        <li class="">
+                            <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse" aria-expanded="false" style="height: 0px;">
+                                <li>
+                                    <a href="blank.html">Blank Page</a>
+                                </li>
+                                <li>
+                                    <a href="login.html">Login Page</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level --> 
+                <!-- /.sidebar-collapse -->
+            </div> 
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper" style="min-height: 645px; padding-left: 0px; padding-right: 0px;">
+            <div id="wrapper">
+<!-- frontpart -->
+
+    <div class="result">결과</div>
+
+   
+<!-- <button id='startSparkBtn'>spark-submit</button>
+<h4 id="resultSparkTxt">result : </h4> -->
+
+</select>
+<script>
+		$('#startSparkBtn').click(function() {
+			$.ajax({
+				url: '/spark',
+				type: 'GET',
+				dataType: 'json',
+				success: function(result) {
+					console.log(result)
+					$('#resultSparkTxt').html("result : "+result.result)
+				},
+				error: function(error)  {
+					console.log(error)
+				}
+			})
+		})
+		$('#allState').change(function() {
+			var application_id = $(this).val()
+			$.ajax({
+				url: '/appState',
+				dataType: 'json',
+				type: 'GET',
+				data: {"id":application_id},
+				success:function(result) {
+					var elapsedTime = result.result.elapsedTime;
+					var sec_gap = elapsedTime /1000;
+					var min_gap = Math.floor(elapsedTime /1000/60);
+					var hour_gap = Math.floor(elapsedTime / 1000 / 60 /60);
+					var name = result.result.name;			
+					$('#id').html("id : "+result.result.id)
+					$('#name').html("name : "+result.result.name)
+					$('#elapsedTime').html("elapsedTime : "+  hour_gap + "시" + min_gap+ "분" +sec_gap + "초")
+					$('#startedTime').html("startedTime : "+new Date(result.result.startedTime).toString())
+					$('#finishedTime').html("finishedTime : "+ new Date(result.result.finishedTime).toString())
+					$('#state').html("state : " + result.result.state)
+				},	
+				error:function(error) {
+					console.log("error : " + error)	
+				}
+			})
+		})
+		$(document).ready(function() {
+			allRefreshState();
+			setInterval( allRefreshState ,2000);
+		});
+var allStateLen = null
+function allRefreshState() {	
+	$.ajax({
+				url: '/yarnAllState',
+				dataType: 'json',
+				type: 'GET',
+				success:function(result) {
+					var stateLen = result.result.length;
+					$('#allState').attr("size", stateLen)
+					if(allStateLen != stateLen) {
+						$('#allState').empty();
+						for(var i=0; i<stateLen; i++)
+	  					{
+							var id = result.result[i].id;
+							var name = result.result[i].name;
+							var state = result.result[i].state;
+							var startedTime = new Date(result.result[i].startedTime).toString();
+							if(result.result[i].state == "RUNNING")	{	
+								$('<option id="'+id+'" class="'+state+'" value="'+ id +'" style="background-color:yellow">' + id + '</option>').appendTo('#allState');
+							} else {		
+								$('<option id="'+id+'" class="'+state+'" value="'+ id +'" style="background-color:gray">' + id +  '</option>').appendTo('#allState');
+							}
+						}
+						allStateLen = stateLen;
+					}
+					else {
+						for(var i=0; i<stateLen; i++) {
+							var id = result.result[i].id;
+							var name = result.result[i].name;
+							var currentState = result.result[i].state;
+							var beforeClass = $('#'+id).attr('class')
+							var startedTime = new Date(result.result[i].startedTime).toString();
+							
+							if(beforeClass != currentState ) {
+								$('#'+id).removeClass(beforeClass);
+								$('#'+id).addClass(currentState);
+								$('#'+id).html(id)
+								var state = ""
+								console.log(currentState)
+								if(currentState == "ACCEPTED") {
+									state = "ACCEPTED"
+									$('#'+id).attr('style','background-color:blue');
+								} else if(currentState == "RUNNING") {
+									state = "RUNNING"
+									$('#'+id).attr('style','background-color:yellow');
+								} else if(currentState == "FINISHED") {
+									state = "FINISHED"
+									$('#'+id).attr('style','background-color:gray');
+								}
+								if($('#allState option:selected').attr('id') == id) {
+									$('#state').html("state : "+state)
+								}
+							}
+						}
+					}	
+				},
+				error:function(error) {
+					console.log("error : "+ error)
+				}
+			})
+}
+$('.submit').click( function() {
+      $('.result').html('처리중');
+      $.ajax({
+        url: '/sparkSubmit',
+        method: 'post',
+        data: {
+	'APP' : $('#select_APP option:selected').val(),
+	'user' : $('#select_user option:selected').val(),
+	'data' : $('#select_data option:selected').val(),
+	'paramater' : $('#paramater').val()
+	},
+        dataType: 'json',
+        success: function(result) {
+          if(result){
+            $('.result').html(result.result);
+          }
+        }
+      });
+    });
+    $('#select_user').click( function() {
+      $.ajax({
+        url: '/makeList',
+        method: 'post',
+        data: {
+	'user' : $('#select_user option:selected').val()
+	},
+        dataType: 'json',
+        success: function(result) {
+          if(result){
+	    $('#select_data').empty();
+	    for(var i=1 ; i<result.datalist.length ; i++){
+              $('#select_data').append('<option value='+result.datalist[i]+'>'+result.datalist[i]+'</option>');
+	    }
+          }
+        }
+      });
+    });
+    $(document).ready(function(){
+      $.ajax({
+        url: '/makeList',
+        method: 'post',
+        data: {
+	'user' : $('#select_user option:selected').val()
+	},
+        dataType: 'json',
+        success: function(result) {
+          if(result){
+	    for(var i=1 ; i<result.applist.length ; i++){
+              $('#select_APP').append('<option value='+result.applist[i]+'>'+result.applist[i]+'</option>');
+	    }
+	    for(var i=1 ; i<result.userlist.length ; i++){
+              $('#select_user').append('<option value='+result.userlist[i]+'>'+result.userlist[i]+'</option>');
+	    }
+	  }
+	}
+      });
+    });
+	</script>        
+        <!-- /#page-wrapper -->
+
+    </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="/vendor/raphael/raphael.min.js"></script>
+    <script src="/vendor/morrisjs/morris.min.js"></script>
+    <!--<script src="/data/morris-data.js"></script>-->
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/dist/js/sb-admin-2.js"></script>
+
+
+
+
+
+</body></html>
