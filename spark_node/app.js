@@ -8,6 +8,14 @@ var bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+//custompages
+var frontRouter = require('./routes/front');
+var inboundRouter = require('./routes/inbound');
+var outboundRouter = require('./routes/outbound');
+var backRouter = require('./routes/back');
+var clusterRouter = require('./routes/cluster');
+var hdfsRouter = require('./routes/hdfs');
+
 //var spk = require('./routes/spk');
 //var uploader = require('./routes/uploader');
 
@@ -28,13 +36,28 @@ app.use(bodyParser.urlencoded({extended: true}));
 // default
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+//userpages
+app.get('/front',frontRouter);
+app.get('/inbound',inboundRouter);
+app.get('/outbound',outboundRouter);
+app.get('/back',backRouter);
+app.get('/cluster',clusterRouter);
+app.get('/hdfs',hdfsRouter);
 
+//yarn
 app.use('/uploads', indexRouter)
 app.use('/yarnAllState', indexRouter)
 app.use('/appState', indexRouter)
 
 app.use('/spk', indexRouter);
 //app.use('/upload', uploader);
+
+//css&js
+app.use('/css', express.static(__dirname +'/node_modules/bootstrap/dist/css'));
+app.use('/js', express.static(__dirname +'/node_modules/bootstrap/dist/js'));
+app.use('/vendor', express.static(__dirname +'/node_modules/bootstrap/vendor'));
+app.use('/data', express.static(__dirname +'/node_modules/bootstrap/data'));
+app.use('/dist', express.static(__dirname +'/node_modules/bootstrap/dist'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
