@@ -46,10 +46,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // default
 app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+//admin page
 app.use('/admin',adminRouter)
 app.use('/saveApp', adminRouter)
+//app.use('/admin/appUpload', adminRouter)
 
-app.use('/users', usersRouter);
+
 //userpages
 app.get('/front',frontRouter);
 app.get('/inbound',inboundRouter);

@@ -8,7 +8,9 @@
     <select id="appList" name="appList"></select>
     </div>
 
-    <input type='file' id='appFile' name='appFile'>
+    <form action="/appUpload" method="post" enctype="multipart/form-data" id="fileForm">
+        <input type='file' id='appFile' name='appFile'>
+    </form>
     
     <br>    
     <input type='file' id='metaFile' name='metaFile'>
@@ -92,22 +94,55 @@
             
             var fileValue = $('#appFile').val().split("\\");
             info.appName = fileValue[fileValue.length-1];
-            //console.log(info)
-            //mongodb save
-         
+
+            //app data
+            var form = $('#fileForm')[0];
+            var formData = new FormData(form);
+            
+            //append formData + info(parameter data)
+            for(var key in info) {
+                if(key== "help") {
+                    for(var i in info.help) {
+                    formData.append(key, info.help[i])
+                    }
+                }
+                else{
+                    formData.append(key, info[key]);
+                }
+            }
+            
+            //save : app(.py..) + parameterFile(.json..) in mongodb 
             $.ajax({
                 url: '/admin/saveApp',
-                dataType: 'json',
-                data : info,
-                method : "POST",
-                success: function(result) {
-                    console.log(result)
+                data: formData,
+                method: 'POST',
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    //console.log(result);
+                    if(result.status) {
+                        alert("App 업로드에 성공하였습니다.")
+                    }
                 },
-                error : function(error) {
-                    console.log(error)
+                error: function (err) {
+                    console.log(err);
                 }
-            })
-        })
+            });
+            // $.ajax({
+            //     url: '/admin/saveApp',
+            //     dataType: 'json',
+            //     data : info,
+            //     method : "POST",
+            //     success: function(result) {
+            //         console.log(result)
+            //     },
+            //     error : function(error) {
+            //         console.log(error)
+            //     }
+            // })
+            
+        
+    })
     </script>
   </body>
 </html>
