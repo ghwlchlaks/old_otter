@@ -659,7 +659,7 @@ function allRefreshState() {
 $('.submit').click( function() {
       $('.result').html('처리중');
       $.ajax({
-        url: '/spk',
+        url: '/',
         method: 'post',
         data: {
 	'APP' : $('#select_APP option:selected').val(),
@@ -680,7 +680,7 @@ $('.submit').click( function() {
   <script>
     $('#select_user').click( function() {
       $.ajax({
-        url: '/spk',
+        url: '/',
         method: 'post',
         data: {
 	'user' : $('#select_user option:selected').val()
@@ -962,7 +962,7 @@ function allRefreshState() {
 $('.submit').click( function() {
       $('.result').html('처리중');
       $.ajax({
-        url: '/spk',
+        url: '/spark',
         method: 'post',
         data: {
 	'APP' : $('#select_APP option:selected').val(),
@@ -983,7 +983,7 @@ $('.submit').click( function() {
   <script>
     $('#select_user').click( function() {
       $.ajax({
-        url: '/spk',
+        url: '/spark',
         method: 'post',
         data: {
 	'user' : $('#select_user option:selected').val()

@@ -8,7 +8,7 @@ var fs = require('fs')
 const SparkPolicy = require('../policies/SparkPolicy')
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	res.render('index', { title: 'Express'});  
+	res.render('user', { title: 'Express'});  
 });
 
 router.post('/sparkSubmit', SparkPolicy.sparkSubmit )
@@ -21,5 +21,7 @@ router.get('/appState', SparkPolicy.appState)
 
 router.get('/appHelp',SparkPolicy.appHelp)
 router.post('/upload',SparkPolicy.upload)
+router.post('/dataUpload',SparkPolicy.dataUpload)
+router.post('/dataDelete',SparkPolicy.dataDelete)
 
 module.exports = router;
