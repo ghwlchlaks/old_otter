@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  </head>
+  <body>
+    <div>
+    <select id="appList" name="appList"></select>
+    </div>
+
+    <input type='file' id='appFile' name='appFile'>
+    
+    <br>    
+    <input type='file' id='metaFile' name='metaFile'>
+
+    <br>
+    <button id="uploadBtn">upload button</button>
+    
+    <br>
+    <textarea id="metaText" rows="10" cols="50"></textarea>
+
+    <br>
+    <button id="confirmBtn">confirm</button>
+
+    <script>
+        var info ={
+            "appName": "",
+            "description": "",
+            "type": "",
+            "help": null,
+            "username" :  ""
+        }
+        $('#uploadBtn').click(function() {
+            $('#metaFile').trigger('change')
+        })
+        $('#metaFile').change(function(e) {
+            const files = e.target.files;
+            if(files && files.length > 0) {
+                const targetFile = files[0]
+                try {
+                    const path = window.URL.createObjectURL(targetFile)
+            
+                    $.getJSON(path, function(data) {
+                        // $.each(data, function(j, item) {
+                        //     console.log(j+ " " + item)
+                        // })
+                        info.appName = data.appName
+                        info.description = data.description
+                        info.type = "json"
+                        info.username = "admin"
+
+                        var output = ""
+                        var inputHelp = []
+                        for(var i in data.help) {
+                            inputHelp.push(data.help[i])
+                            output += data.help[i] + "\n"
+                        }
+                        info.help = inputHelp
+                        $('#metaText').html(output)
+                        //console.log(info)
+                    })
+                }
+                catch(ex) {
+                    try {
+                        const fileReader = new FileReader();
+                        fileReader.onload = (event) =>  {
+                            console.log("fileReader " + event.target.result)
+                        }
+                        fileReader.readAsDataURL(targetFile)
+                    }
+                    catch (e) {
+                        console.log("file upload not supported : ")
+                    }
+                }
+            }
+        })
+        
+        $('#uploadBtn').click(function() {
+            $.getJSON()
+            var data = "";
+            $('#metaText').html(data)
+        })
+
+        $('#confirmBtn').click(function() {
+            var modify_help = $('#metaText').val().split("\n")
+            var inputHelp = []
+            for(var i in modify_help) {
+                inputHelp.push(modify_help[i])
+            }
+            info.help = inputHelp
+            //console.log(info)
+            
+            var fileValue = $('#appFile').val().split("\\");
+            info.appName = fileValue[fileValue.length-1];
+            //console.log(info)
+            //mongodb save
+         
+            $.ajax({
+                url: '/admin/saveApp',
+                dataType: 'json',
+                data : info,
+                method : "POST",
+                success: function(result) {
+                    console.log(result)
+                },
+                error : function(error) {
+                    console.log(error)
+                }
+            })
+        })
+    </script>
+  </body>
+</html>
