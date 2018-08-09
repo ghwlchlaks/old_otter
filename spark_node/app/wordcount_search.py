@@ -1,4 +1,5 @@
 
+
 from pyspark import SparkContext
 import argparse
 
@@ -25,3 +26,6 @@ counts = text_file.flatMap(lambda line: line.split(" "))\
 
 #print wordcount
 print counts.collect()
+
+
+

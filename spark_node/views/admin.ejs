@@ -1,0 +1,246 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  </head>
+  <body>
+    <div>
+    <select id="appList" name="appList"></select>
+    <button id="delApp" name="delApp">delete App</button>
+
+    <h3 id="appName">[appName]</h3>
+    <h3 id="description">[description]</h3>
+    <h3 id="type">[type]</h3>
+    <h3 id="username">[username]</h3>
+    <h3 id="help">[help]</h3>
+    </div>
+
+    <form action="/appUpload" method="post" enctype="multipart/form-data" id="fileForm">
+        <input type='file' id='appFile' name='appFile' accept=".py">
+    </form>
+    
+    <br>    
+    <input type='file' id='metaFile' name='metaFile' accept=".json">
+
+    <br>
+    <button id="uploadBtn">upload button</button>
+    
+    <br>
+    <h4>help</h4>
+    <textarea id="metaText" rows="10" cols="50"></textarea>
+
+    <br>
+    <button id="confirmBtn">confirm</button>
+
+    <script>
+        var info ={
+            "appName": "",
+            "description": "",
+            "type": "",
+            "help": null,
+            "username" :  ""
+        }
+        function appListRef() {
+            $.ajax({
+                url: '/admin/appList',
+                method: "GET",
+                    success: function(result) {
+                    $('#appList').empty();
+                    var list = result.result.split("\n");
+                    $('#appList').attr("size", list.length-1)
+                    //console.log(list)
+		            for(let arr of list){
+		                $('#appList').append('<option id='+arr+ 'value='+arr+'>'+arr+'</option>');
+		            }
+                },
+                error : function(error) {
+                    console.log(error)
+                }
+            })
+        }
+        $('#appList').change(function(){
+            var selectedId = $(this).val();
+            $.ajax({
+                url: "/admin/appData",
+                method: "GET",
+                data : {"id": selectedId},
+                dataType: 'json',
+                success: function(result) {
+                    var data = result.result;
+                    var helps = ""
+                    //console.log(data.help)
+                    $('#appName').html("[appName]<br>"+data.appName)
+                    $('#description').html("[description]<br>" +data.description)
+                    $('#type').html("[type]<br>"+ data.type)
+                    $('#username').html("[username]<br>"+data.username)
+                    for (let help of data.help) {
+                        helps += help + "<br>"
+                    }
+                    $('#help').html("help<br>"+ helps)
+                },
+                error : function(error) {
+                    console.log(error)
+                } 
+            })
+            
+        })
+        $('#delApp').click(function(){
+            var check = confirm("really?")
+            if(check) {
+                var clickedId = $('#appList').val()
+                $.ajax({
+                    url: "/admin/delApp",
+                    dataType: "json",
+                    method: "GET",
+                    data : {"id" : clickedId},
+                    success: function(result) {
+                        if(!result.result) {
+                            alert("failed metadata delete ")
+                        } else {
+                            appListRef()
+                        }
+                    }, 
+                    error : function(error) {
+                        console.log(error)
+                    }
+                })
+            }
+        })
+        $('#appFile').change(function(){
+            if(fname == null || fname ==undefined){}
+            else {
+                var fname = $(this).val().split('.')[1].toLowerCase()
+                if(fname != "py"){
+                    alert("!!!!!!!")
+                    $(this).val(null)
+                }
+            }
+        })
+        $('#metaFile').change(function(){
+            if(fname ==null || fname == undefined){}
+                else {
+                var fname = $(this).val().split('.')[1].toLowerCase()
+                if(fname != "json"){
+                    alert("!!!!!!!")
+                    $(this).val(null)
+                }
+            }
+        })
+        $(document).ready(function() {
+            appListRef();
+        })
+        $('#uploadBtn').click(function() {
+            $('#metaFile').trigger('change')
+        })
+        $('#metaFile').change(function(e) {
+            const files = e.target.files;
+            if(files && files.length > 0) {
+                const targetFile = files[0]
+                try {
+                    const path = window.URL.createObjectURL(targetFile)
+            
+                    $.getJSON(path, function(data) {
+                        // $.each(data, function(j, item) {
+                        //     console.log(j+ " " + item)
+                        // })
+                        info.appName = data.appName
+                        info.description = data.description
+                        info.type = "json"
+                        info.username = "admin"
+
+                        var output = ""
+                        var inputHelp = []
+                        for(var i in data.help) {
+                            inputHelp.push(data.help[i])
+                            output += data.help[i] + "\n"
+                        }
+                        info.help = inputHelp
+                        $('#metaText').html(output)
+                        //console.log(info)
+                    })
+                }
+                catch(ex) {
+                    try {
+                        const fileReader = new FileReader();
+                        fileReader.onload = (event) =>  {
+                            console.log("fileReader " + event.target.result)
+                        }
+                        fileReader.readAsDataURL(targetFile)
+                    }
+                    catch (e) {
+                        console.log("file upload not supported : ")
+                    }
+                }
+            }
+        })
+        
+        $('#uploadBtn').click(function() {
+            $.getJSON()
+            var data = "";
+            $('#metaText').html(data)
+        })
+
+        $('#confirmBtn').click(function() {
+            var modify_help = $('#metaText').val().split("\n")
+            var inputHelp = []
+            for(var i in modify_help) {
+                inputHelp.push(modify_help[i])
+            }
+            info.help = inputHelp
+            //console.log(info)
+            
+            var fileValue = $('#appFile').val().split("\\");
+            info.appName = fileValue[fileValue.length-1];
+
+            //app data
+            var form = $('#fileForm')[0];
+            var formData = new FormData(form);
+            
+            //append formData + info(parameter data)
+            for(var key in info) {
+                if(key== "help") {
+                    for(var i in info.help) {
+                    formData.append(key, info.help[i])
+                    }
+                }
+                else{
+                    formData.append(key, info[key]);
+                }
+            }
+            
+            //save : app(.py..) + parameterFile(.json..) in mongodb 
+            $.ajax({
+                url: '/admin/saveApp',
+                data: formData,
+                method: 'POST',
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    //console.log(result);
+                    if(result.status) {
+                        alert("App 업로드에 성공하였습니다.")
+                        appListRef()
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+            // $.ajax({
+            //     url: '/admin/saveApp',
+            //     dataType: 'json',
+            //     data : info,
+            //     method : "POST",
+            //     success: function(result) {
+            //         console.log(result)
+            //     },
+            //     error : function(error) {
+            //         console.log(error)
+            //     }
+            // })
+            
+        
+    })
+    </script>
+  </body>
+</html>

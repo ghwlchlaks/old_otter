@@ -5,9 +5,15 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+
+//config
+var dbconfig = require('./config/database');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var adminRouter = require('./routes/admin');
+
 //custompages
 var frontRouter = require('./routes/front');
 var inboundRouter = require('./routes/inbound');
@@ -16,8 +22,13 @@ var backRouter = require('./routes/back');
 var clusterRouter = require('./routes/cluster');
 var hdfsRouter = require('./routes/hdfs');
 
-//var spk = require('./routes/spk');
-//var uploader = require('./routes/uploader');
+mongoose.connect(dbconfig.meta_collection, { useNewUrlParser: true });
+mongoose.Promise = global.Promise;
+var db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error: '))
+db.once('open', function (callback) {
+  console.log('mongo db connected..')
+})
 
 var app = express();
 
@@ -36,6 +47,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 // default
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+//admin page
+app.use('/admin',adminRouter)
+app.use('/saveApp', adminRouter)
+app.use('/appList', adminRouter)
+app.use('/appData', adminRouter)
+app.use('/delApp',adminRouter)
+//app.use('/admin/appUpload', adminRouter)
+
+
 //userpages
 app.get('/front',frontRouter);
 app.get('/inbound',inboundRouter);
@@ -50,7 +71,6 @@ app.use('/yarnAllState', indexRouter)
 app.use('/appState', indexRouter)
 
 app.use('/spk', indexRouter);
-//app.use('/upload', uploader);
 
 
 //css&js

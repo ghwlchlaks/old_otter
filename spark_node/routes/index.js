@@ -9,6 +9,7 @@ const SparkPolicy = require('../policies/SparkPolicy')
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	res.render('user', { title: 'Express'});  
+	//res.render('index1', { title: 'Express'});  
 });
 
 router.post('/sparkSubmit', SparkPolicy.sparkSubmit )
