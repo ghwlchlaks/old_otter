@@ -1,8 +1,3 @@
-'''
-[사용방법]
---word [word]
-'''
-
 from pyspark import SparkContext
 import argparse
 
@@ -25,7 +20,7 @@ text_file = sc.textFile("hdfs:///"+username+"/"+ filename)
 
 #word search and count
 counts = text_file.flatMap(lambda line: line.split(" "))\
-	     .filter(lambda i : i == search)\
+             .filter(lambda i : i == search)\
              .map(lambda word: (word, 1)) \
              .reduceByKey(lambda a, b: a + b)
 

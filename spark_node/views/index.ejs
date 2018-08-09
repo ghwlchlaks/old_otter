@@ -1411,24 +1411,24 @@ $('.submit').click( function() {
 		});
 		$('#select_APP').change(function() {
 			var appName = $(this).val()
-			$.ajax({
-				url:'appHelp',
-				method: 'GET',
-				dataType:'json',
-				data: {"name" :appName},
-				success: function(result) {
-					var help = result.result.split("'''")[1]
-					var helpParse = help.split("\n")
-					data = ""
-					for (var i=1; i<helpParse.length; i++) {
-						data+= helpParse[i] + "<br>"
-					}
-					$('#appHelp').html(data)
-				},
-				error: function(error) {
-					console.log("error" + error)
-				}
-			})
+			// $.ajax({
+			// 	url:'appHelp',
+			// 	method: 'GET',
+			// 	dataType:'json',
+			// 	data: {"name" :appName},
+			// 	success: function(result) {
+			// 		var help = result.result.split("'''")[1]
+			// 		var helpParse = help.split("\n")
+			// 		data = ""
+			// 		for (var i=1; i<helpParse.length; i++) {
+			// 			data+= helpParse[i] + "<br>"
+			// 		}
+			// 		$('#appHelp').html(data)
+			// 	},
+			// 	error: function(error) {
+			// 		console.log("error" + error)
+			// 	}
+			// })
 		})
   
 
