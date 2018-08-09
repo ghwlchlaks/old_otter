@@ -39,8 +39,14 @@
 
 <br>
 <br>
-<select id="allState" name="allState" size="2">
-</select>
+<p>
+	<select class="stateList" id="allState" name="allState" size="2">
+	</select>
+	<select class="stateList" id="runState" name="runState" size="10">
+	</select>
+	<select class="stateList" id="doneState" name="doneState" size="10">
+	</select>
+</p>
 <div class="appState">
 	<h4 id="id">id : </h4>
 	<h4 id="name">name : </h4>
@@ -64,7 +70,7 @@
 				}
 			})
 		})
-		$('#allState').change(function() {
+		$('.stateList').change(function() {
 			var application_id = $(this).val()
 			$.ajax({
 				url: '/appState',
@@ -103,6 +109,19 @@ function allRefreshState() {
 				type: 'GET',
 				success:function(result) {
 					var stateLen = result.result.length;
+					$('#runState').empty()
+					$('#doneState').empty()
+					for(var i=0; i<stateLen; i++) {
+						var id = result.result[i].id;
+						var name = result.result[i].name;
+						var state = result.result[i].state;
+						if(state == "RUNNING") {
+							$('<option id="'+id+'" class="'+state+'" value="'+ id +'" style="background-color:yellow">' + id + '</option>').appendTo('#runState');
+						} else if(state=="FINISHED") {
+							$('<option id="'+id+'" class="'+state+'" value="'+ id +'" style="background-color:gray">' + id + '</option>').appendTo('#doneState');
+						}
+					}
+					
 					$('#allState').attr("size", stateLen)
 					if(allStateLen != stateLen) {
 						$('#allState').empty();
