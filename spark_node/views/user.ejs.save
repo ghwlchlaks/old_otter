@@ -166,8 +166,11 @@ $('.submit').click( function() {
 
 	for(var i=0 ; i < paramaterKey.length ; i++){
 	  paramaterValue += paramaterKey[i]
-	  paramaterValue += $('#'+paramaterKey[i]).val()
+//	  paramaterValue += $('#'+paramaterKey[i]).val()
+//	  paramaterValue += $('#'+paramaterKey[1]).val()
+
 	}
+
 
       $.ajax({
         url: '/sparkSubmit',

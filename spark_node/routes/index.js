@@ -23,5 +23,6 @@ router.get('/appHelp',SparkPolicy.appHelp)
 router.post('/upload',SparkPolicy.upload)
 router.post('/dataUpload',SparkPolicy.dataUpload)
 router.post('/dataDelete',SparkPolicy.dataDelete)
+router.post('/makeParamaterBlank',SparkPolicy.makeParamaterBlank)
 
 module.exports = router;

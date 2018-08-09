@@ -1,7 +1,3 @@
-'''
-[사용방법]
---word [word]
-'''
 
 from pyspark import SparkContext
 import argparse
@@ -13,15 +9,13 @@ sc = SparkContext()
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--file", help=": file name")
-parser.add_argument("--user", help=": user name")
 parser.add_argument("--word", help=": search word name")
 
 filename = parser.parse_args().file
-username = parser.parse_args().user
 search = parser.parse_args().word
 
 #read file route
-text_file = sc.textFile("hdfs:///"+username+"/"+ filename)
+text_file = sc.textFile("hdfs:///data/"+ filename)
 
 #word search and count
 counts = text_file.flatMap(lambda line: line.split(" "))\

@@ -73,7 +73,7 @@ module.exports = {
 	
 	},
 	sparkSubmit(req, res) {
-		var submit = 'spark-submit '+'app/'+req.body.APP+' --file='+req.body.data+' --user='+req.body.user+' '+req.body.paramater
+		var submit = 'spark-submit '+'app/'+req.body.APP+' --file='+req.body.data + ' ' +  req.body.paramater
 		exec(submit, function (err, stdout, stderr) {
 
 			console.log(submit);
@@ -82,17 +82,17 @@ module.exports = {
 		});
 	},
 	makeList(req, res) {
-		exec('hdfs dfs -ls /' + dataFolder , function(err, stdout, stderr){
+		exec("curl -i 'http://192.168.2.12:50070/webhdfs/v1//data?op=LISTSTATUS'" , function(err, stdout, stderr){
 			//make data list
-			var dataList = stdout.split('\n')
-			for(var i=1 ; i<dataList.length-1 ; i++){
-                		dataList[i] = dataList[i].split('/'+dataFolder+'/')[1]
-                		console.log(dataList[i])
+			var dataList = stdout.split('pathSuffix":"')
+			for(var i=1 ; i<dataList.length ; i++){
+                		dataList[i] = dataList[i].split('","permission')[0]
         		}
 			fs.readdir('./app', function (err, files){
 				res.send({applist: files, datalist : dataList});
 			});
 		});
+
 	},
 
 	appHelp(req, res) {
@@ -157,14 +157,17 @@ module.exports = {
 				exec('rm '+DummyPath+originalName , function(err, stdout, stderr){
 					console.log('Remove Dummy DATA');
 					//make new data list
-					exec('hdfs dfs -ls /' + dataFolder , function(err, stdout, stderr){
-						console.log('make new data list')
-						var dataList = stdout.split('\n')
-						for(var i=1 ; i<dataList.length-1 ; i++){
-                					dataList[i] = dataList[i].split('/'+dataFolder+'/')[1]
-                					console.log(dataList[i])
-        					}
-						res.send({datalist : dataList})
+
+
+					exec("curl -i 'http://192.168.2.12:50070/webhdfs/v1//data?op=LISTSTATUS'" , function(err, stdout, stderr){
+						//make data list
+						var dataList = stdout.split('pathSuffix":"')
+						for(var i=1 ; i<dataList.length ; i++){
+			                		dataList[i] = dataList[i].split('","permission')[0]
+			        		}
+						fs.readdir('./app', function (err, files){
+							res.send({datalist : dataList});
+						});
 					});
 				});
 			});
@@ -176,16 +179,41 @@ module.exports = {
 		exec('hdfs dfs -rm /' + dataFolder +'/'+ req.body.data , function(err, stdout, stderr){
 			console.log('Remove DATA to HDFS')
 			//make new data list
-			exec('hdfs dfs -ls /' + dataFolder , function(err, stdout, stderr){
-				console.log('make new data list')
-				var dataList = stdout.split('\n')
-				for(var i=1 ; i<dataList.length-1 ; i++){
-					dataList[i] = dataList[i].split('/'+dataFolder+'/')[1]
-					console.log(dataList[i])
-				}
-			res.send({datalist : dataList})
+
+
+			exec("curl -i 'http://192.168.2.12:50070/webhdfs/v1//data?op=LISTSTATUS'" , function(err, stdout, stderr){
+				//make data list
+				var dataList = stdout.split('pathSuffix":"')
+				for(var i=1 ; i<dataList.length ; i++){
+	                		dataList[i] = dataList[i].split('","permission')[0]
+	        		}
+				fs.readdir('./app', function (err, files){
+					res.send({datalist : dataList})
+				});
 			});
 		});
+	},
+	makeParamaterBlank(req, res){
+		fs.readFile('app/test.json', 'utf-8', function(error, data){
+			data = data.split('"help": [')[1].split('],')[0].split(',')
+
+			for(var i=0 ; i < data.length ; i++){
+				data[i] = data[i].split('"')[1]
+				data[i] = data[i].split('"')[0]
+			}
+
+			for(var i=0 ; i < data.length ; i++){
+
+				data[i] = data[i].split('[')[0]
+
+			}
+
+
+			console.log(data)
+
+			res.send({paralist : data})
+
+		});		
 	}
 }
 
