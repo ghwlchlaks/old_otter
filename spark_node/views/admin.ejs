@@ -6,6 +6,11 @@
   <body>
     <div>
     <select id="appList" name="appList"></select>
+    <h3 id="appName">appName : </h3>
+    <h3 id="description">description : </h3>
+    <h3 id="type">type : </h3>
+    <h3 id="username">username : </h3>
+    <h3 id="help">help : </h3>
     </div>
 
     <form action="/appUpload" method="post" enctype="multipart/form-data" id="fileForm">
@@ -32,6 +37,53 @@
             "help": null,
             "username" :  ""
         }
+        function appListRef() {
+            $.ajax({
+                url: '/admin/appList',
+                method: "GET",
+                    success: function(result) {
+                    $('#appList').empty();
+                    var list = result.result.split("\n");
+                    $('#appList').attr("size", list.length)
+                    //console.log(list)
+		            for(let arr of list){
+		                $('#appList').append('<option id='+arr+ 'value='+arr+'>'+arr+'</option>');
+		            }
+                },
+                error : function(error) {
+                    console.log(error)
+                }
+            })
+        }
+        $('#appList').change(function(){
+            var selectedId = $(this).val();
+            $.ajax({
+                url: "/admin/appData",
+                method: "GET",
+                data : {"id": selectedId},
+                dataType: 'json',
+                success: function(result) {
+                    var data = result.result;
+                    var helps = ""
+                    //console.log(data.help)
+                    $('#appName').html("[appName]<br>"+data.appName)
+                    $('#description').html("[description]<br>" +data.description)
+                    $('#type').html("[type]<br>"+ data.type)
+                    $('#username').html("[username]<br>"+data.username)
+                    for (let help of data.help) {
+                        helps += help + "<br>"
+                    }
+                    $('#help').html("help<br>"+ helps)
+                },
+                error : function(error) {
+                    console.log(error)
+                } 
+            })
+            
+        })
+        $(document).ready(function() {
+            appListRef();
+        })
         $('#uploadBtn').click(function() {
             $('#metaFile').trigger('change')
         })
@@ -122,6 +174,7 @@
                     //console.log(result);
                     if(result.status) {
                         alert("App 업로드에 성공하였습니다.")
+                        appListRef()
                     }
                 },
                 error: function (err) {

@@ -10,5 +10,7 @@ router.get('/', function(req, res) {
 	res.render('admin');  
 });
 router.post('/saveApp', adminPolicy.saveFile, adminPolicy.saveInfo);
+router.get('/appList', adminPolicy.appList)
+router.get('/appData',adminPolicy.appData)
 // router.post('/appUpload', adminPolicy.saveFile)
 module.exports = router;

@@ -57,6 +57,27 @@ module.exports = {
 				})
 			}
         });
+	},
+	appList(req, res) {
+		var submit = 'ls app/'
+		exec(submit, function(error, stdout, stderr) {
+			if(error !== null) {
+				//console.log('exec error :' + error)
+				res.send({status: false, result:error})
+			} else {
+				res.send({status:true ,result: stdout})
+			}
+		});	
+	},
+	appData(req, res) {
+		var id = req.query.id
+		Meta.findOne({appName:id}, function(err, app) {
+			if(err) {res.send({status: false, result: err})}
+			if(!app) {res.send({status: false, result: "not exists app data"})}
+			else {
+				res.send({status: true, result: app})
+			}
+		})
 	}
 }
 
