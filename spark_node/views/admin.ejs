@@ -7,19 +7,20 @@
     <div>
     <select id="appList" name="appList"></select>
     <button id="delApp" name="delApp">delete App</button>
-    <h3 id="appName">appName : </h3>
-    <h3 id="description">description : </h3>
-    <h3 id="type">type : </h3>
-    <h3 id="username">username : </h3>
-    <h3 id="help">help : </h3>
+
+    <h3 id="appName">[appName]</h3>
+    <h3 id="description">[description]</h3>
+    <h3 id="type">[type]</h3>
+    <h3 id="username">[username]</h3>
+    <h3 id="help">[help]</h3>
     </div>
 
     <form action="/appUpload" method="post" enctype="multipart/form-data" id="fileForm">
-        <input type='file' id='appFile' name='appFile'>
+        <input type='file' id='appFile' name='appFile' accept=".py">
     </form>
     
     <br>    
-    <input type='file' id='metaFile' name='metaFile'>
+    <input type='file' id='metaFile' name='metaFile' accept=".json">
 
     <br>
     <button id="uploadBtn">upload button</button>
@@ -46,7 +47,7 @@
                     success: function(result) {
                     $('#appList').empty();
                     var list = result.result.split("\n");
-                    $('#appList').attr("size", list.length)
+                    $('#appList').attr("size", list.length-1)
                     //console.log(list)
 		            for(let arr of list){
 		                $('#appList').append('<option id='+arr+ 'value='+arr+'>'+arr+'</option>');
@@ -103,6 +104,26 @@
                         console.log(error)
                     }
                 })
+            }
+        })
+        $('#appFile').change(function(){
+            if(fname == null || fname ==undefined){}
+            else {
+                var fname = $(this).val().split('.')[1].toLowerCase()
+                if(fname != "py"){
+                    alert("!!!!!!!")
+                    $(this).val(null)
+                }
+            }
+        })
+        $('#metaFile').change(function(){
+            if(fname ==null || fname == undefined){}
+                else {
+                var fname = $(this).val().split('.')[1].toLowerCase()
+                if(fname != "json"){
+                    alert("!!!!!!!")
+                    $(this).val(null)
+                }
             }
         })
         $(document).ready(function() {
