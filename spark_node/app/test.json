@@ -1,0 +1,7 @@
+{
+    "appName": "test.py",
+    "description": "test",
+    "type": "json",
+    "help": ["--word [word]"],
+    "username" :  "choi"
+}

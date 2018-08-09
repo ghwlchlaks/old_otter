@@ -1,21 +1,20 @@
+
 from pyspark import SparkContext
 import argparse
 
 #spark context
 sc = SparkContext()
 
-print(sc.applicationId)
+print(sc.applicationId+'\n')
 #make & receved outer argument
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--file", help=": file name")
-parser.add_argument("--user", help=": user name")
 
 filename = parser.parse_args().file
-username = parser.parse_args().user
 
 #read file route
-text_file = sc.textFile("hdfs:///"+username+"/"+ filename)
+text_file = sc.textFile("hdfs:///data/"+ filename)
 
 #wordcount
 counts = text_file.flatMap(lambda line: line.split(" ")) \

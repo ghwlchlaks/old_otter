@@ -6,6 +6,8 @@ const fs = require('fs')
 const multiparty = require('multiparty');
 slack.setWebhook(webhookUri);
 
+var dataFolder = 'data' //HDFS data folder name
+
 const  sendToSlack = (message) => {
   slack.webhook({
     channel: "#general", // 전송될 슬랙 채널
@@ -71,7 +73,7 @@ module.exports = {
 	
 	},
 	sparkSubmit(req, res) {
-		var submit = 'spark-submit '+'app/'+req.body.APP+' --file='+req.body.data+' --user='+req.body.user+' '+req.body.paramater
+		var submit = 'spark-submit '+'app/'+req.body.APP+' --file='+req.body.data + ' ' +  req.body.paramater
 		exec(submit, function (err, stdout, stderr) {
 
 			console.log(submit);
@@ -80,25 +82,17 @@ module.exports = {
 		});
 	},
 	makeList(req, res) {
-		exec('hdfs dfs -ls /' + req.body.user , function(err, stdout, stderr){
-			//make file list to username
-			var dataList = stdout.split('\n')
-			for(var i=1 ; i<dataList.length-1 ; i++){
-                		dataList[i] = dataList[i].split('/'+req.body.user+'/')[1]
-                		console.log(dataList[i])
+		exec("curl -i 'http://192.168.2.12:50070/webhdfs/v1//data?op=LISTSTATUS'" , function(err, stdout, stderr){
+			//make data list
+			var dataList = stdout.split('pathSuffix":"')
+			for(var i=1 ; i<dataList.length ; i++){
+                		dataList[i] = dataList[i].split('","permission')[0]
         		}
-			exec('hdfs dfs -ls /', function(err, stdout, stderr){
-			        //make user list
-			        var userList = stdout.split('\n')
-			        for(var i=1 ; i<userList.length-1 ; i++){
-			                userList[i] = userList[i].split('/')[1]
-			                console.log(userList[i])
-				        }
-				fs.readdir('./app', function (err, files){
-					res.send({applist: files, userlist: userList, datalist : dataList});
-				});
+			fs.readdir('./app', function (err, files){
+				res.send({applist: files, datalist : dataList});
 			});
 		});
+
 	},
 
 	appHelp(req, res) {
@@ -114,29 +108,112 @@ module.exports = {
 			res.send({status:true ,result: stdout})
 		});	
 	},
-	upload(req, res){
+        upload(req, res){
+                var form = new multiparty.Form({
+                        fileNames: 'uploadtest.txt',
+                        autoFiles: false,
+                        uploadDir: 'app/',
+//                      maxFilesSize: 1024 * 1024 * 5
+                });
+                form.parse(req, function(error, fields, files){
+                        var path = files.fileInput[0].path
+                        var originalName = files.fileInput[0].originalFilename
+                        console.log('file path : ' + path);
+                        console.log('original name : ' + originalName);
+
+                        //rename upload file
+                        fs.rename(path, 'app/'+originalName, function (err){
+                                console.log('renamed complete');
+                        });
+                        fs.readdir('./app', function (err, files){
+                                res.send({applist: files})
+                        });
+                });
+
+        },
+	dataUpload(req, res){
+		var DummyPath = 'app/'
 		var form = new multiparty.Form({
 			fileNames: 'uploadtest.txt',
 			autoFiles: false,
-			uploadDir: 'app/',
+			uploadDir: DummyPath,
 //	                maxFilesSize: 1024 * 1024 * 5
 		});
 		form.parse(req, function(error, fields, files){
 			var path = files.fileInput[0].path
 			var originalName = files.fileInput[0].originalFilename
-			console.log(path);
-			console.log(originalName);
+			console.log('file path : ' + path);
+			console.log('original name : ' + originalName);
 
 			//rename upload file
-			fs.rename(path, 'app/'+originalName, function (err){
+			fs.rename(path, DummyPath+originalName, function (err){
 				console.log('renamed complete');
 			});
-//			console.log('filename :'+files.fileInput[0].path)
-			fs.readdir('./app', function (err, files){
-				res.send({applist: files})
+
+			//Upload DATA to HDFS
+			exec('hdfs dfs -put '+DummyPath+originalName + ' /' + dataFolder , function(err, stdout, stderr){
+				console.log('Upload DATA to HDFS')
+				//Remove Dummy DATA
+				exec('rm '+DummyPath+originalName , function(err, stdout, stderr){
+					console.log('Remove Dummy DATA');
+					//make new data list
+
+
+					exec("curl -i 'http://192.168.2.12:50070/webhdfs/v1//data?op=LISTSTATUS'" , function(err, stdout, stderr){
+						//make data list
+						var dataList = stdout.split('pathSuffix":"')
+						for(var i=1 ; i<dataList.length ; i++){
+			                		dataList[i] = dataList[i].split('","permission')[0]
+			        		}
+						fs.readdir('./app', function (err, files){
+							res.send({datalist : dataList});
+						});
+					});
+				});
 			});
         	});
 
+	},
+	dataDelete(req, res){
+		//Remove DATA to HDFS
+		exec('hdfs dfs -rm /' + dataFolder +'/'+ req.body.data , function(err, stdout, stderr){
+			console.log('Remove DATA to HDFS')
+			//make new data list
+
+
+			exec("curl -i 'http://192.168.2.12:50070/webhdfs/v1//data?op=LISTSTATUS'" , function(err, stdout, stderr){
+				//make data list
+				var dataList = stdout.split('pathSuffix":"')
+				for(var i=1 ; i<dataList.length ; i++){
+	                		dataList[i] = dataList[i].split('","permission')[0]
+	        		}
+				fs.readdir('./app', function (err, files){
+					res.send({datalist : dataList})
+				});
+			});
+		});
+	},
+	makeParamaterBlank(req, res){
+		fs.readFile('app/test.json', 'utf-8', function(error, data){
+			data = data.split('"help": [')[1].split('],')[0].split(',')
+
+			for(var i=0 ; i < data.length ; i++){
+				data[i] = data[i].split('"')[1]
+				data[i] = data[i].split('"')[0]
+			}
+
+			for(var i=0 ; i < data.length ; i++){
+
+				data[i] = data[i].split('[')[0]
+
+			}
+
+
+			console.log(data)
+
+			res.send({paralist : data})
+
+		});		
 	}
 }
 
