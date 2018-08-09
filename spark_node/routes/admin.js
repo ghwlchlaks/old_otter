@@ -12,5 +12,6 @@ router.get('/', function(req, res) {
 router.post('/saveApp', adminPolicy.saveFile, adminPolicy.saveInfo);
 router.get('/appList', adminPolicy.appList)
 router.get('/appData',adminPolicy.appData)
+router.get('/delApp', adminPolicy.delApp)
 // router.post('/appUpload', adminPolicy.saveFile)
 module.exports = router;

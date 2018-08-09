@@ -6,6 +6,7 @@
   <body>
     <div>
     <select id="appList" name="appList"></select>
+    <button id="delApp" name="delApp">delete App</button>
     <h3 id="appName">appName : </h3>
     <h3 id="description">description : </h3>
     <h3 id="type">type : </h3>
@@ -24,6 +25,7 @@
     <button id="uploadBtn">upload button</button>
     
     <br>
+    <h4>help</h4>
     <textarea id="metaText" rows="10" cols="50"></textarea>
 
     <br>
@@ -80,6 +82,28 @@
                 } 
             })
             
+        })
+        $('#delApp').click(function(){
+            var check = confirm("really?")
+            if(check) {
+                var clickedId = $('#appList').val()
+                $.ajax({
+                    url: "/admin/delApp",
+                    dataType: "json",
+                    method: "GET",
+                    data : {"id" : clickedId},
+                    success: function(result) {
+                        if(!result.result) {
+                            alert("failed metadata delete ")
+                        } else {
+                            appListRef()
+                        }
+                    }, 
+                    error : function(error) {
+                        console.log(error)
+                    }
+                })
+            }
         })
         $(document).ready(function() {
             appListRef();

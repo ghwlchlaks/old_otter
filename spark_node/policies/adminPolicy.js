@@ -78,6 +78,27 @@ module.exports = {
 				res.send({status: true, result: app})
 			}
 		})
+	},
+	delApp(req, res) {
+		var id = req.query.id
+		var path = 'app/'+id
+		fs.exists(path, function(exists) {
+			if(!exists) {res.send({status: false, result: "not exists"})}
+			else {
+				fs.unlink(path, function(err){
+					if(err) {res.send({status: false, result: "permission denied"})}
+					else {
+						Meta.remove({appName:id},function(err, result) {
+							if(err) {res.send({status: false, result:err})}
+							if(!result) {res.send({status: false, result: result})}
+							else {
+								res.send({status: true, result: result})
+							}
+						})
+					}
+				}) 
+			}
+		})
 	}
 }
 

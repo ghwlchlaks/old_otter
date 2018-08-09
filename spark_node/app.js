@@ -53,6 +53,7 @@ app.use('/admin',adminRouter)
 app.use('/saveApp', adminRouter)
 app.use('/appList', adminRouter)
 app.use('/appData', adminRouter)
+app.use('/delApp',adminRouter)
 //app.use('/admin/appUpload', adminRouter)
 
 
