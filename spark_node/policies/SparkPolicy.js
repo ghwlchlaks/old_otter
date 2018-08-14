@@ -194,26 +194,26 @@ module.exports = {
 		});
 	},
 	 makeParamaterBlank(req, res){
-	// 	fs.readFile('app/test.json', 'utf-8', function(error, data){
-	// 		data = data.split('"help": [')[1].split('],')[0].split(',')
+		// fs.readFile('app/test.json', 'utf-8', function(error, data){
+		// 	data = data.split('"help": [')[1].split('],')[0].split(',')
 
-	// 		for(var i=0 ; i < data.length ; i++){
-	// 			data[i] = data[i].split('"')[1]
-	// 			data[i] = data[i].split('"')[0]
-	// 		}
+		// 	for(var i=0 ; i < data.length ; i++){
+		// 		data[i] = data[i].split('"')[1]
+		// 		data[i] = data[i].split('"')[0]
+		// 	}
 
-	// 		for(var i=0 ; i < data.length ; i++){
+		// 	for(var i=0 ; i < data.length ; i++){
 
-	// 			data[i] = data[i].split('[')[0]
+		// 		data[i] = data[i].split('[')[0]
 
-	// 		}
+		// 	}
 
 
-	// 		console.log(data)
+		// 	console.log(data)
 
-	// 		res.send({paralist : data})
+		// 	res.send({paralist : data})
 
-	// 	});		
+		// });		
 	}
 }
 

@@ -73,8 +73,10 @@
                     $('#description').html("[description]<br>" +data.description)
                     $('#type').html("[type]<br>"+ data.type)
                     $('#username').html("[username]<br>"+data.username)
-                    for (let help of data.help) {
-                        helps += help + "<br>"
+                    if (data.help.length > 0) {
+                        for (let help of data.help) {
+                            helps += help + "<br>"
+                        }
                     }
                     $('#help').html("help<br>"+ helps)
                 },
