@@ -197,11 +197,8 @@ module.exports = {
 		});
 	},
 	 makeParamaterBlank(req, res){
-
 		var appname = req.body.appname
-
 		console.log('select ' + appname)
-
 		Meta.findOne({appName : appname}, function(error, metadata){
 			console.log('--- Read one ---')
 				if(error){
@@ -211,8 +208,6 @@ module.exports = {
 					if(data[data.length-1] == ''){
 						data.splice(data.length-1,1)
 					}
-
-
 					for(var i=0 ; i < data.length ; i++){
 			 			data[i] = data[i].split('[')[0]
 					//	console.log(data[i])
