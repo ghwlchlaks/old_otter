@@ -8,6 +8,9 @@ slack.setWebhook(webhookUri);
 
 var dataFolder = 'data' //HDFS data folder name
 
+//mongodb model
+const Meta = require('../models/metaModel').Meta
+
 const  sendToSlack = (message) => {
   slack.webhook({
     channel: "#general", // 전송될 슬랙 채널
@@ -194,26 +197,24 @@ module.exports = {
 		});
 	},
 	 makeParamaterBlank(req, res){
-		// fs.readFile('app/test.json', 'utf-8', function(error, data){
-		// 	data = data.split('"help": [')[1].split('],')[0].split(',')
-
-		// 	for(var i=0 ; i < data.length ; i++){
-		// 		data[i] = data[i].split('"')[1]
-		// 		data[i] = data[i].split('"')[0]
-		// 	}
-
-		// 	for(var i=0 ; i < data.length ; i++){
-
-		// 		data[i] = data[i].split('[')[0]
-
-		// 	}
-
-
-		// 	console.log(data)
-
-		// 	res.send({paralist : data})
-
-		// });		
+		var appname = req.body.appname
+		console.log('select ' + appname)
+		Meta.findOne({appName : appname}, function(error, metadata){
+			console.log('--- Read one ---')
+				if(error){
+					console.log(error)
+				}else{
+					data = metadata.help
+					if(data[data.length-1] == ''){
+						data.splice(data.length-1,1)
+					}
+					for(var i=0 ; i < data.length ; i++){
+			 			data[i] = data[i].split('[')[0]
+					//	console.log(data[i])
+					}
+					res.send({paralist : data})
+				}
+		})
 	}
 }
 

@@ -15,7 +15,6 @@
       <select name='textfile' size='6' id='select_data'>
       </select>
 
-      <input id='paramater' name='paramater' type='text' placeholder='input paramater'>
     </form>
 
     <form id='paramater_blank'>
@@ -283,16 +282,23 @@ $('.submit').click( function() {
         url: '/makeParamaterBlank',
         method: 'post',
         data: {
-	'data' : $('#select_APP option:selected').val()
+	'appname' : $('#select_APP option:selected').val()
 	},
         dataType: 'json',
         success: function(result) {
           if(result){
 
 	    $('#paramater_blank').empty();
+	    paramaterKey = []
+
 	    for(var i=0 ; i<result.paralist.length ; i++){
+
+	      //make paramater key list
 	      paramaterKey[i] = result.paralist[i]
+
+	      //make paramater blank
               $('#paramater_blank').append(result.paralist[i]+'<input id='+result.paralist[i]+'type="text">');
+
 	    }
           }
         }
