@@ -9,13 +9,16 @@
   </head>
   <body>
     <p>
-    <form id='list' action='/makeList'>
-      <select name='spkfile' size='6' id='select_APP'>
+    <form id='list' action='/client/makeList'>
+      <select name='spkfile' size='6' id='select_APP' >
       </select>
-      <select name='textfile' size='6' id='select_data'>
+      <select name='textfile' size='6' id='select_data' >
       </select>
-
     </form>
+
+		<input type="radio" value='slack' id="slackBtn" name="sendRadio" />slack
+		<input type="radio" value='email' id="emailBtn" name="sendRadio" />email
+		<input type="text" name="sendName" id="user"/>
 
     <form id='paramater_blank'>
     </form>
@@ -30,13 +33,10 @@
     <br>
 
     <form id='fileForm' method='post' enctype='multipart/form-data' action='/upload'>
-	<input type='file' id='fileInput' name='fileInput'>
+	<input type='file' id='fileInput' name='fileInput' accept=".txt, .log" size="500MB">
     </form>
     <button class='upload'>DATA FILE UPLOAD</button>
     <button class='delete'>DATA FILE DELETE</button>
-
-<!-- <button id='startSparkBtn'>spark-submit</button>
-<h4 id="resultSparkTxt">result : </h4> -->
 
 <br>
 <br>
@@ -57,24 +57,10 @@
 	<h4 id="state">state : </h4>
 </div>
 <script>
-		$('#startSparkBtn').click(function() {
-			$.ajax({
-				url: '/spark',
-				type: 'GET',
-				dataType: 'json',
-				success: function(result) {
-					console.log(result)
-					$('#resultSparkTxt').html("result : "+result.result)
-				},
-				error: function(error)  {
-					console.log(error)
-				}
-			})
-		})
 		$('.stateList').change(function() {
 			var application_id = $(this).val()
 			$.ajax({
-				url: '/appState',
+				url: '/client/appState',
 				dataType: 'json',
 				type: 'GET',
 				data: {"id":application_id},
@@ -105,7 +91,7 @@
 var allStateLen = null
 function allRefreshState() {	
 	$.ajax({
-				url: '/yarnAllState',
+				url: '/client/yarnAllState',
 				dataType: 'json',
 				type: 'GET',
 				success:function(result) {
@@ -190,13 +176,14 @@ $('.submit').click( function() {
 	}
 
       $.ajax({
-        url: '/sparkSubmit',
+        url: '/client/sparkSubmit',
         method: 'post',
         data: {
 	'APP' : $('#select_APP option:selected').val(),
-	'user' : $('#select_user option:selected').val(),
 	'data' : $('#select_data option:selected').val(),
-	'paramater' : paramaterValue
+	'paramater' : paramaterValue,
+	'target': $('input[name="sendRadio"]:checked').val(),
+	'user' : $('#user').val()
 //$('#'+paramaterKey[0]).val()
 	},
         dataType: 'json',
@@ -209,7 +196,7 @@ $('.submit').click( function() {
     });
     $('.delete').click( function() {
       $.ajax({
-        url: '/dataDelete',
+        url: '/client/dataDelete',
         method: 'post',
         data: {
 	'data' : $('#select_data option:selected').val()
@@ -228,7 +215,7 @@ $('.submit').click( function() {
     });
     $(document).ready(function(){
       $.ajax({
-        url: '/makeList',
+        url: '/client/makeList',
         method: 'post',
         data: {	},
         dataType: 'json',
@@ -241,7 +228,7 @@ $('.submit').click( function() {
 	}
       });
       $.ajax({
-        url: '/makeList',
+        url: '/client/makeList',
         method: 'post',
         data: {	},
         dataType: 'json',
@@ -263,7 +250,7 @@ $('.submit').click( function() {
 	var formData = new FormData(form);
 
 	$.ajax({
-	  url:'/dataUpload',
+	  url:'/client/dataUpload',
 	  processData: false,
 	  contentType: false,
 	  data : formData,
@@ -279,7 +266,7 @@ $('.submit').click( function() {
     });
     $('#select_APP').click( function() {
       $.ajax({
-        url: '/makeParamaterBlank',
+        url: '/client/makeParamaterBlank',
         method: 'post',
         data: {
 	'appname' : $('#select_APP option:selected').val()
