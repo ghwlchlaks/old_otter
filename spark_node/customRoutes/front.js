@@ -67,7 +67,7 @@ router.post('/', function(req, res, next){
     });
 
 });
-router.get('/spark',SparkPolicy.command)
+//router.get('/spark',SparkPolicy.command)
 //router.get('/yarnAll', SparkPolicy.AllYarnStates)
 router.get('/yarnAllState', SparkPolicy.AllYarnStates)
 router.get('/appState', SparkPolicy.appState)

@@ -10,17 +10,10 @@ var mongoose = require('mongoose');
 //config
 var dbconfig = require('./config/database');
 
+//index, admin , client routes file
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var clientRouter = require('./routes/client');
 var adminRouter = require('./routes/admin');
-
-//custompages
-var frontRouter = require('./routes/front');
-var inboundRouter = require('./routes/inbound');
-var outboundRouter = require('./routes/outbound');
-var backRouter = require('./routes/back');
-var clusterRouter = require('./routes/cluster');
-var hdfsRouter = require('./routes/hdfs');
 
 mongoose.connect(dbconfig.meta_collection, { useNewUrlParser: true });
 mongoose.Promise = global.Promise;
@@ -46,32 +39,22 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // default
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/admin', adminRouter)
+app.use('/client', clientRouter);
 
 //admin page
-app.use('/admin',adminRouter)
 app.use('/saveApp', adminRouter)
 app.use('/appList', adminRouter)
 app.use('/appData', adminRouter)
 app.use('/delApp',adminRouter)
-//app.use('/admin/appUpload', adminRouter)
 
-
-//userpages
-app.get('/front',frontRouter);
-app.get('/inbound',inboundRouter);
-app.get('/outbound',outboundRouter);
-app.get('/back',backRouter);
-app.get('/cluster',clusterRouter);
-app.get('/hdfs',hdfsRouter);
-
-//yarn
-app.use('/uploads', indexRouter)
-app.use('/yarnAllState', indexRouter)
-app.use('/appState', indexRouter)
-
-app.use('/spk', indexRouter);
-
+//client page 
+app.use('/dataUpload', clientRouter)
+app.use('/dataDelete', clientRouter)
+app.use('/makeList', clientRouter)
+app.use('/makeParamaterBlank', clientRouter)
+app.use('/yarnAllState', clientRouter)
+app.use('/appState', clientRouter)
 
 //css&js
 app.use('/css', express.static(__dirname +'/node_modules/bootstrap/dist/css'));
@@ -81,7 +64,7 @@ app.use('/data', express.static(__dirname +'/node_modules/bootstrap/data'));
 app.use('/dist', express.static(__dirname +'/node_modules/bootstrap/dist'));
 
 
-app.use('/appHelp', indexRouter)
+//app.use('/appHelp', indexRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
