@@ -94,7 +94,7 @@ module.exports = {
 			 			data[i] = data[i].split('[')[0]
 					//	console.log(data[i])
 					}
-					res.send({paralist : data})
+					res.send({paralist : data, description : metadata.description})
 				}
 		})
 	}

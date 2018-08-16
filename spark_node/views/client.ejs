@@ -175,6 +175,12 @@ $('.submit').click( function() {
 	  paramaterValue += $('#'+paramaterKey[i]).val()
 	}
 
+      if($('#select_data option:selected').val() == null){
+        alert('please select data file')
+      } else if ($('#select_APP option:selected').val() == null){
+        alert('please select Application')
+      } else{
+
       $.ajax({
         url: '/client/sparkSubmit',
         method: 'post',
@@ -193,8 +199,12 @@ $('.submit').click( function() {
           }
         }
       });
+      }
     });
     $('.delete').click( function() {
+      if($('#select_data option:selected').val() == null){
+          alert('please select data file')
+        } else {
       $.ajax({
         url: '/client/dataDelete',
         method: 'post',
@@ -212,6 +222,7 @@ $('.submit').click( function() {
           }
         }
       });
+      }
     });
     $(document).ready(function(){
       $.ajax({
@@ -249,20 +260,24 @@ $('.submit').click( function() {
 	var form = $('#fileForm')[0];
 	var formData = new FormData(form);
 
-	$.ajax({
-	  url:'/client/dataUpload',
-	  processData: false,
-	  contentType: false,
-	  data : formData,
-	  type: 'POST',
-	  success: function(result){
+	if($('#fileInput').val() == ""){
+          alert('please select upload file')
+        } else {	
+	  $.ajax({
+	    url:'/client/dataUpload',
+	    processData: false,
+	    contentType: false,
+	    data : formData,
+	    type: 'POST',
+	    success: function(result){
 
-		$('#select_data').empty();
-		for(var i=1 ; i<result.datalist.length ; i++){
-		  $('#select_data').append('<option value='+result.datalist[i]+'>'+result.datalist[i]+'</option>');
-		}
-	  }
-	});
+		  $('#select_data').empty();
+		  for(var i=1 ; i<result.datalist.length ; i++){
+		    $('#select_data').append('<option value='+result.datalist[i]+'>'+result.datalist[i]+'</option>');
+		  }
+	    }
+	  });
+	}
     });
     $('#select_APP').click( function() {
       $.ajax({
@@ -287,6 +302,9 @@ $('.submit').click( function() {
               $('#paramater_blank').append(result.paralist[i]+'<input id='+result.paralist[i]+'type="text">');
 
 	    }
+
+	    $('#paramater_blank').append('<br>'+'Description : '+result.description)
+
           }
         }
       });
