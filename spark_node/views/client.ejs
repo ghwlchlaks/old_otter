@@ -166,7 +166,6 @@ function allRefreshState() {
 var paramaterKey = new Array()
 
 $('.submit').click( function() {
-      $('.result').html('처리중');
 
       var paramaterValue = ''
 
@@ -181,6 +180,7 @@ $('.submit').click( function() {
         alert('please select Application')
       } else{
 
+      $('.result').html('처리중');
       $.ajax({
         url: '/client/sparkSubmit',
         method: 'post',
@@ -256,7 +256,7 @@ $('.submit').click( function() {
 
     });
 
-    $('.upload').click(function(){
+    $('#fileForm').change(function(){
 	var form = $('#fileForm')[0];
 	var formData = new FormData(form);
 

@@ -82,7 +82,6 @@ module.exports = {
 		var appname = req.body.appname
 		console.log('select ' + appname)
 		Meta.findOne({appName : appname}, function(error, metadata){
-			console.log('--- Read one ---')
 				if(error){
 					console.log(error)
 				}else{
