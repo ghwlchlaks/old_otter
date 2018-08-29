@@ -64,8 +64,10 @@ app.use('/data', express.static(__dirname +'/node_modules/bootstrap/data'));
 app.use('/dist', express.static(__dirname +'/node_modules/bootstrap/dist'));
 
 
-//app.use('/appHelp', indexRouter)
+app.use('/slack', clientRouter)
+app.use('/slacklist', clientRouter)
 
+app.use('/schema', indexRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
