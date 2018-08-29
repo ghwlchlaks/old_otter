@@ -96,5 +96,24 @@ module.exports = {
 					res.send({paralist : data, description : metadata.description})
 				}
 		})
+	},
+	sparkLog(req, res){
+		//first, make log file to log4j
+		fs.readFile('/var/log/spark.log', 'utf-8', function(err, data){
+
+			var latelyLog = new Array()
+			latelyLog[0] = ''
+			var visibleLog = 20
+
+			data = data.split('\n')
+
+			for(i = data.length-2 ; i > data.length-visibleLog ; i--){
+				for(j = visibleLog+2 ; j > -1 ; j--){
+					latelyLog[j] = latelyLog[j] + data[i] + '\n'
+				}
+			}
+
+			res.send({latelyLog : latelyLog, allLog : data})
+		})
 	}
 }
