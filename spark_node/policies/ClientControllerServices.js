@@ -21,7 +21,7 @@ module.exports = {
 		});
 	},
 	dataUpload(req, res){
-		var DummyPath = 'app/'
+		var DummyPath = '../app/'
 		var form = new multiparty.Form({
 			fileNames: 'uploadtest.txt',
 			autoFiles: false,
@@ -53,7 +53,7 @@ module.exports = {
 						for(var i=1 ; i<dataList.length ; i++){
 			                		dataList[i] = dataList[i].split('","permission')[0]
 			        		}
-						fs.readdir('./app', function (err, files){
+						fs.readdir('../app', function (err, files){
 							res.send({datalist : dataList});
 						});
 					});
@@ -72,7 +72,7 @@ module.exports = {
 				for(var i=1 ; i<dataList.length ; i++){
 	                		dataList[i] = dataList[i].split('","permission')[0]
 	        		}
-				fs.readdir('./app', function (err, files){
+				fs.readdir('../app', function (err, files){
 					res.send({datalist : dataList})
 				});
 			});

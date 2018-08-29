@@ -30,7 +30,7 @@ module.exports = {
 
 function sendToSlack (message, callback) {
   slack.webhook({
-    channel: "#general", // 전송될 슬랙 채널
+    channel: "@Choi", // 전송될 슬랙 채널
     username: "webhookbot", //슬랙에 표시될 이름
     text: message
   }, function(err, response) {

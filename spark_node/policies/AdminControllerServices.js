@@ -3,63 +3,72 @@ const fs = require('fs')
 const multiparty = require('multiparty');
 
 //mongodb model
-const Meta = require('../models/metaModel').Meta;
+var App = require('../models/appSchema').App
 
 module.exports = {
 	saveInfo(req, res) {
-		//var body = req.body
 		var body = req.info
-		Meta.findOne({appName : body.appName}, function(err, user) {
+		var info = JSON.parse(fs.readFileSync('../json/'+body,'utf-8'))
+		console.log(info)
+		App.findOne({"appName" : info.appName}, function(err, user) {
 			if(err) {
 				res.send({status:false, result: err})
 			}
 			if(!user) {
 				//save data
-				//console.log(body['help[]'])
-				meta = new Meta({
-					appName : body.appName[0],
-					description : body.description[0],
-					type : body.type[0],
-					username : body.username[0],
-					//help : body['help[]']
-					help : body.help
+				parameter = []
+				for (var data of info.parameters){
+					parameter.push(data)
+				}
+				app = new App({
+					"appName" : info.appName,
+					"description" : info.description,
+					"author" : info.author,
+					"parameters" : parameter,
+					"version" : info.version,
+					"type" :info.type
 				})
-				meta.save(function(err, user) {
+				app.save(function(err, user) {
 					//console.log('create', user)
 					res.send({status: true, result: user})
 				})
-			} else {
+			} 
+			else {
 				res.send({status: false, result: "file exists"})
 			}
 		})
 	},
 
 	saveFile(req, res, next) {
-		console.log(req.body)
 		var form = new multiparty.Form({
 			autoFiles: false,
-			uploadDir: 'app/',
+			uploadDir: '../app/',
 		});
 		form.parse(req, function(error, fields, files){
-			//console.log(files)
-			//console.log(fields)
 			var path = files.appFile[0].path;
 			var originalName = files.appFile[0].originalFilename
 			if(error) {res.send({status: false, result:error})}
 			else {
-				fs.rename(path, 'app/' +originalName, function(err){
+				fs.rename(path, '../app/' +originalName, function(err){
 					if(err) {res.send({status: false, result: err})}
 					else {
-						//res.send({status: true, result: originalName})
-						req.info = fields
-						next()
+						path = files.appFile[1].path
+						originalName = files.appFile[1].originalFilename
+						fs.rename(path, '../json/' +originalName, function(err) {
+							if(err) {res.send({status:false, result:err})}
+							else {
+								req.info = originalName
+								console.log(req.info)
+								next()
+							}
+						})
 					}
 				})
 			}
         });
 	},
 	appList(req, res) {
-		var submit = 'ls app/'
+		var submit = 'ls ../app/'
 		exec(submit, function(error, stdout, stderr) {
 			if(error !== null) {
 				//console.log('exec error :' + error)
@@ -71,7 +80,7 @@ module.exports = {
 	},
 	appData(req, res) {
 		var id = req.query.id
-		Meta.findOne({appName:id}, function(err, app) {
+		App.findOne({appName:id}, function(err, app) {
 			if(err) {res.send({status: false, result: err})}
 			if(!app) {res.send({status: false, result: "not exists app data"})}
 			else {
@@ -81,14 +90,14 @@ module.exports = {
 	},
 	delApp(req, res) {
 		var id = req.query.id
-		var path = 'app/'+id
+		var path = '../app/'+id
 		fs.exists(path, function(exists) {
 			if(!exists) {res.send({status: false, result: "not exists"})}
 			else {
 				fs.unlink(path, function(err){
 					if(err) {res.send({status: false, result: "permission denied"})}
 					else {
-						Meta.remove({appName:id},function(err, result) {
+						App.remove({appName:id},function(err, result) {
 							if(err) {res.send({status: false, result:err})}
 							if(!result) {res.send({status: false, result: result})}
 							else {
