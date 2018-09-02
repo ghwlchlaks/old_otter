@@ -35,8 +35,13 @@
     <form id='fileForm' method='post' enctype='multipart/form-data' action='/upload'>
 	<input type='file' id='fileInput' name='fileInput' accept=".txt, .log" size="500MB">
     </form>
-    <button class='upload'>DATA FILE UPLOAD</button>
     <button class='delete'>DATA FILE DELETE</button>
+<br>
+<br>
+
+    <textarea class='sparkLog' id='sparkLog' cols=60 rows=10>
+    </textarea>
+
 
 <br>
 <br>
@@ -166,7 +171,6 @@ function allRefreshState() {
 var paramaterKey = new Array()
 
 $('.submit').click( function() {
-      $('.result').html('처리중');
 
       var paramaterValue = ''
 
@@ -181,6 +185,7 @@ $('.submit').click( function() {
         alert('please select Application')
       } else{
 
+      $('.result').html('처리중');
       $.ajax({
         url: '/client/sparkSubmit',
         method: 'post',
@@ -228,8 +233,6 @@ $('.submit').click( function() {
       $.ajax({
         url: '/client/makeList',
         method: 'post',
-        data: {	},
-        dataType: 'json',
         success: function(result) {
           if(result){
 	    for(var i=0 ; i<result.applist.length ; i++){
@@ -241,8 +244,6 @@ $('.submit').click( function() {
       $.ajax({
         url: '/client/makeList',
         method: 'post',
-        data: {	},
-        dataType: 'json',
         success: function(result) {
           if(result){
 
@@ -253,10 +254,23 @@ $('.submit').click( function() {
           }
         }
       });
-
+	updateLog()
     });
 
-    $('.upload').click(function(){
+function updateLog(){
+	$.ajax({
+	  url: '/client/sparkLog',
+	  method: 'post',
+	  success:function(result){
+	    if(result){
+		$('#sparkLog').val(result.latelyLog)
+	    }
+	  }
+	})
+	setTimeout('updateLog()',1000)
+}
+
+    $('#fileForm').change(function(){
 	var form = $('#fileForm')[0];
 	var formData = new FormData(form);
 
