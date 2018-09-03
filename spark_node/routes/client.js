@@ -17,6 +17,7 @@ router.post('/makeList', ClientControllerServices.makeList)
 router.post('/dataUpload',ClientControllerServices.dataUpload)
 router.post('/dataDelete',ClientControllerServices.dataDelete)
 router.post('/makeParamaterBlank',ClientControllerServices.makeParamaterBlank)
+router.post('/sparkLog', ClientControllerServices.sparkLog)
 
 router.get('/yarnAllState', YarnStateServices.AllYarnStates)
 router.get('/appState', YarnStateServices.appState)
