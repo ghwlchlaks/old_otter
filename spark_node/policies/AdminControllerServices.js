@@ -8,7 +8,7 @@ var App = require('../models/appSchema').App
 module.exports = {
 	saveInfo(req, res) {
 		var body = req.info
-		var info = JSON.parse(fs.readFileSync('../json/'+body,'utf-8'))
+		var info = JSON.parse(fs.readFileSync('../jsonFolder/'+body,'utf-8'))
 		console.log(info)
 		App.findOne({"appName" : info.appName}, function(err, user) {
 			if(err) {
@@ -54,7 +54,7 @@ module.exports = {
 					else {
 						path = files.appFile[1].path
 						originalName = files.appFile[1].originalFilename
-						fs.rename(path, '../json/' +originalName, function(err) {
+						fs.rename(path, '../jsonFolder/' +originalName, function(err) {
 							if(err) {res.send({status:false, result:err})}
 							else {
 								req.info = originalName
