@@ -6,6 +6,9 @@ var logger = require('morgan');
 var cors = require('cors');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var session = require('express-session')
+var passport = require('passport');
+var passportPolicy = require('./policies/AuthencationServices')
 
 //config
 var dbconfig = require('./config/database');
@@ -36,6 +39,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(session({secret: "abc", resave:true, saveUninitialized: false}));
+app.use(passport.initialize())
+app.use(passport.session())
+passportPolicy.service()
 
 // default
 app.use('/', indexRouter);
@@ -55,6 +62,12 @@ app.use('/makeList', clientRouter)
 app.use('/makeParamaterBlank', clientRouter)
 app.use('/yarnAllState', clientRouter)
 app.use('/appState', clientRouter)
+
+//login route
+app.use('/service', indexRouter);
+app.use('/register', indexRouter)
+app.use('/profile', indexRouter)
+app.use('/logout',indexRouter)
 
 //css&js
 app.use('/css', express.static(__dirname +'/node_modules/bootstrap/dist/css'));
