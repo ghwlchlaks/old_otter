@@ -12,8 +12,21 @@ var dbconfig = require('./config/database');
 
 //index, admin , client routes file
 var indexRouter = require('./routes/index');
+var testRouter = require('./routes/test');
 var clientRouter = require('./routes/client');
 var adminRouter = require('./routes/admin');
+
+
+var clientmainRouter = require('./routes/client_main');
+var appstatusRouter = require('./routes/app_status');
+var clusterRouter = require('./routes/cluster');
+var hdfsRouter = require('./routes/hdfs');
+var yarnRouter = require('./routes/yarn');
+var zooRouter = require('./routes/zoo');
+
+
+var loginRouter = require('./routes/login');
+var registerRouter = require('./routes/register');
 
 mongoose.connect(dbconfig.meta_collection, { useNewUrlParser: true });
 mongoose.Promise = global.Promise;
@@ -39,8 +52,19 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // default
 app.use('/', indexRouter);
+app.use('/test', testRouter);
 app.use('/admin', adminRouter)
 app.use('/client', clientRouter);
+app.use('/client_main',clientmainRouter);
+
+app.use('/app_status', appstatusRouter);
+app.use('/cluster', clusterRouter);
+app.use('/hdfs', hdfsRouter);
+app.use('/yarn', yarnRouter);
+app.use('/zoo', zooRouter);
+
+app.use('/login',loginRouter);
+app.use('/register',registerRouter);
 
 //admin page
 app.use('/saveApp', adminRouter)
@@ -59,10 +83,13 @@ app.use('/appState', clientRouter)
 //css&js
 app.use('/css', express.static(__dirname +'/node_modules/bootstrap/dist/css'));
 app.use('/js', express.static(__dirname +'/node_modules/bootstrap/dist/js'));
+app.use('/img', express.static(__dirname +'/node_modules/bootstrap/dist/img'));
+app.use('/fonts', express.static(__dirname +'/node_modules/bootstrap/dist/fonts'));
+
 app.use('/vendor', express.static(__dirname +'/node_modules/bootstrap/vendor'));
 app.use('/data', express.static(__dirname +'/node_modules/bootstrap/data'));
 app.use('/dist', express.static(__dirname +'/node_modules/bootstrap/dist'));
-
+app.use('/scss', express.static(__dirname +'/node_modules/bootstrap/scss'));
 
 app.use('/slack', clientRouter)
 app.use('/slacklist', clientRouter)
