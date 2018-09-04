@@ -20,7 +20,7 @@
 		<input type="radio" value='email' id="emailBtn" name="sendRadio" />email
 		<input type="text" name="sendName" id="user"/>
 
-    <form id='paramater_blank'>
+    <form id='parameter_blank'>
     </form>
 
     </p>
@@ -36,6 +36,8 @@
 	<input type='file' id='fileInput' name='fileInput' accept=".txt, .log" size="500MB">
     </form>
     <button class='delete'>DATA FILE DELETE</button>
+    <input type="text" placeholder='asd'/>
+
 <br>
 <br>
 
@@ -168,15 +170,15 @@ function allRefreshState() {
 			})
 }
 
-var paramaterKey = new Array()
+var parameterKey = new Array()
 
 $('.submit').click( function() {
 
-      var paramaterValue = ''
+      var parameterValue = ''
 
-	for(var i=0 ; i < paramaterKey.length ; i++){
-	  paramaterValue += paramaterKey[i]
-	  paramaterValue += $('#'+paramaterKey[i]).val()
+	for(var i=0 ; i < parameterKey.length ; i++){
+	  parameterValue += parameterKey[i]
+	  parameterValue += $('#'+parameterKey[i]).val()
 	}
 
       if($('#select_data option:selected').val() == null){
@@ -192,10 +194,9 @@ $('.submit').click( function() {
         data: {
 	'APP' : $('#select_APP option:selected').val(),
 	'data' : $('#select_data option:selected').val(),
-	'paramater' : paramaterValue,
+	'parameter' : parameterValue,
 	'target': $('input[name="sendRadio"]:checked').val(),
 	'user' : $('#user').val()
-//$('#'+paramaterKey[0]).val()
 	},
         dataType: 'json',
         success: function(result) {
@@ -295,7 +296,7 @@ function updateLog(){
     });
     $('#select_APP').click( function() {
       $.ajax({
-        url: '/client/makeParamaterBlank',
+        url: '/client/makeParameterBlank',
         method: 'post',
         data: {
 	'appname' : $('#select_APP option:selected').val()
@@ -304,20 +305,29 @@ function updateLog(){
         success: function(result) {
           if(result){
 
-	    $('#paramater_blank').empty();
-	    paramaterKey = []
+	    $('#parameter_blank').empty();
+	    parameterKey = []
 
-	    for(var i=0 ; i<result.paralist.length ; i++){
+	    for(var i=0 ; i<result.nameList.length ; i++){
 
-	      //make paramater key list
-	      paramaterKey[i] = result.paralist[i]
+	      //make parameter key list
+	      parameterKey[i] = result.nameList[i]
 
-	      //make paramater blank
-              $('#paramater_blank').append(result.paralist[i]+'<input id='+result.paralist[i]+'type="text">');
+	      //check parameters input type
+	      if(result.typeList == 'text'){
+		//make input text parameters
+		$('#parameter_blank').append(
+		result.nameList[i]+'<input id='+result.nameList[i]+'type="text" maxlength="'+result.typeMaxList[i]+'">'+result.descriptionList[i]+'<br>'
+		)
+	      }else if(result.typeList == 'radio'){
+		//make input radio parameters
+		$('#parameter_blank').append(
+		)
+	      }
 
 	    }
 
-	    $('#paramater_blank').append('<br>'+'Description : '+result.description)
+	    $('#parameter_blank').append('<br>'+'Description : '+result.description)
 
           }
         }
