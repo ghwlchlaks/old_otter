@@ -62,6 +62,7 @@ app.use('/makeList', clientRouter)
 app.use('/makeParamaterBlank', clientRouter)
 app.use('/yarnAllState', clientRouter)
 app.use('/appState', clientRouter)
+app.use('/clientYarnAll', clientRouter)
 
 //login route
 app.use('/service', indexRouter);

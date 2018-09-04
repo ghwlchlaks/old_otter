@@ -11,7 +11,6 @@ router.get('/', function(req,res) {
 router.post('/login', authenticateServices.login, authenticateServices.loginResult)
 router.post('/register', authenticateServices.register)
 var isAuthenticated = function(req, res, next) {
-	console.log('test!')
 	if(req.isAuthenticated()){
 		return next()
 	}
