@@ -21,7 +21,7 @@ router.post('/sparkSubmit', isAuthenticated, SparkPolicy.sparkSubmit , ResultSen
 router.post('/makeList', ClientControllerServices.makeList)
 router.post('/dataUpload',ClientControllerServices.dataUpload)
 router.post('/dataDelete',ClientControllerServices.dataDelete)
-router.post('/makeParamaterBlank',ClientControllerServices.makeParamaterBlank)
+router.post('/makeParameterBlank',ClientControllerServices.makeParameterBlank)
 router.post('/sparkLog', ClientControllerServices.sparkLog)
 
 router.get('/yarnAllState', YarnStateServices.AllYarnStates)

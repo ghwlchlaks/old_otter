@@ -5,7 +5,7 @@ const multiparty = require('multiparty');
 var dataFolder = 'data' //HDFS data folder name
 
 //mongodb model
-const Meta = require('../models/metaModel').Meta
+const App = require('../models/appSchema').App
 
 module.exports = {
     makeList(req, res) {
@@ -78,22 +78,41 @@ module.exports = {
 			});
 		});
 	},
-	 makeParamaterBlank(req, res){
+	 makeParameterBlank(req, res){
 		var appname = req.body.appname
 		console.log('select ' + appname)
-		Meta.findOne({appName : appname}, function(error, metadata){
+		App.findOne({appName : appname}, function(error, metadata){
 				if(error){
 					console.log(error)
 				}else{
-					data = metadata.help
-					if(data[data.length-1] == ''){
-						data.splice(data.length-1,1)
+					//parameters data list
+					var nameList = new Array()
+					var descriptionList = new Array()
+					var defaultList = new Array()
+					var typeList = new Array()
+					var typeDataList = new Array()
+					var typeMaxList = new Array()
+					var typeMinList = new Array()
+
+					for (var i=0 ; i < metadata.parameters.length ; i++ ){
+						nameList[i] = metadata.parameters[i].name
+						descriptionList[i] = metadata.parameters[i].description
+						defaultList[i] = metadata.parameters[i].default
+						typeList[i] = metadata.parameters[i].inputType.boxType
+						typeDataList[i] = metadata.parameters[i].inputType.data
+						typeMaxList[i] = metadata.parameters[i].inputType.max
+						typeMinList[i] = metadata.parameters[i].inputType.min
 					}
-					for(var i=0 ; i < data.length ; i++){
-			 			data[i] = data[i].split('[')[0]
-					//	console.log(data[i])
-					}
-					res.send({paralist : data, description : metadata.description})
+					console.log(typeDataList[0].length)
+					res.send({nameList : nameList,
+						description : metadata.description,
+						descriptionList : descriptionList,
+						defaultList : defaultList,
+						typeList : typeList,
+						typeDataList : typeDataList,
+						typeMaxList : typeMaxList,
+						typeMinList : typeMinList
+						})
 				}
 		})
 	},

@@ -5,6 +5,7 @@ module.exports = {
 		var email = req.user.email
 		var submit = 'spark-submit '+'--name'+email+'../app/'+req.body.APP+' --file='+req.body.data + ' ' +  req.body.paramater
 		exec(submit, function (err, stdout, stderr) {
+			console.log(submit)
 			if(err !== null) {
 				console.log('exec error :' + err)
 				res.send({status: false, result:"error"})

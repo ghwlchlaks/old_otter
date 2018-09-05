@@ -20,7 +20,7 @@
 		<input type="radio" value='email' id="emailBtn" name="sendRadio" />email
 		<input type="text" name="sendName" id="user"/>
 
-    <form id='paramater_blank'>
+    <form id='parameter_blank'>
     </form>
 
     </p>
@@ -32,16 +32,17 @@
 
     <br>
 
+    <p>upload data file</p>
     <form id='fileForm' method='post' enctype='multipart/form-data' action='/upload'>
 	<input type='file' id='fileInput' name='fileInput' accept=".txt, .log" size="500MB">
     </form>
     <button class='delete'>DATA FILE DELETE</button>
-<br>
-<br>
 
+<br>
+<br>
+    <p>spark log</p>
     <textarea class='sparkLog' id='sparkLog' cols=60 rows=10>
     </textarea>
-
 
 <br>
 <br>
@@ -168,17 +169,21 @@ function allRefreshState() {
 			})
 }
 
-var paramaterKey = new Array()
+var parameterKey = new Array()
 
 $('.submit').click( function() {
 
-      var paramaterValue = ''
+	//파라미터값 초기화
+	var parameterValue = ''
 
-	for(var i=0 ; i < paramaterKey.length ; i++){
-	  paramaterValue += paramaterKey[i]
-	  paramaterValue += $('#'+paramaterKey[i]).val()
+	//파라미터값 입력
+	for(var i=0 ; i < parameterKey.length ; i++){
+	  parameterValue += parameterKey[i] + '=' + $('#'+parameterKey[i]).val()+' '
 	}
 
+      console.log(parameterValue)
+
+      //예외처리
       if($('#select_data option:selected').val() == null){
         alert('please select data file')
       } else if ($('#select_APP option:selected').val() == null){
@@ -192,7 +197,7 @@ $('.submit').click( function() {
         data: {
 	'APP' : $('#select_APP option:selected').val(),
 	'data' : $('#select_data option:selected').val(),
-	'paramater' : paramaterValue,
+	'parameter' : parameterValue,
 	'target': $('input[name="sendRadio"]:checked').val(),
 	'user' : $('#user').val()
 	},
@@ -294,7 +299,7 @@ function updateLog(){
     });
     $('#select_APP').click( function() {
       $.ajax({
-        url: '/client/makeParamaterBlank',
+        url: '/client/makeParameterBlank',
         method: 'post',
         data: {
 	'appname' : $('#select_APP option:selected').val()
@@ -303,20 +308,35 @@ function updateLog(){
         success: function(result) {
           if(result){
 
-	    $('#paramater_blank').empty();
-	    paramaterKey = []
+	    //파라미터 입력 공간 초기화
+	    $('#parameter_blank').empty();
+	    parameterKey = []
 
-	    for(var i=0 ; i<result.paralist.length ; i++){
+	    //모든 파라미터 체크
+	    for(var i=0 ; i<result.nameList.length ; i++){
 
-	      //make paramater key list
-	      paramaterKey[i] = result.paralist[i]
+	      //파라미터 키 리스트 작성
+	      parameterKey[i] = result.nameList[i]
 
-	      //make paramater blank
-              $('#paramater_blank').append(result.paralist[i]+'<input id='+result.paralist[i]+'type="text">');
+	      //파라미터 입력 타입 체크
+	      if(result.typeList[i] == 'text'){
+		//text 방식 입력 공간 생성
+		$('#parameter_blank').append(
+		  result.nameList[i]+' '+'<input id='+result.nameList[i]+' type="text" maxlength="'+result.typeMaxList[i]+'"> ['+result.descriptionList[i]+']'+'<br>'
+		)
+	      }else if(result.typeList[i] == 'radio'){
+		//radio 방식 입력 공간 생성
+		$('#parameter_blank').append(result.nameList[i]+' ['+result.descriptionList[i]+']'+'<br>')
+		for(var j = 0 ; j < result.typeDataList[i].length ; j++){
+		  $('#parameter_blank').append(
+		    '<input id='+result.nameList[i]+' type="radio" value='+result.typeDataList[i][j]+' name='+result.nameList[i]+'/>'+result.typeDataList[i][j]+'<br>'
+		  )
+		}
+	      }
 
 	    }
 
-	    $('#paramater_blank').append('<br>'+'Description : '+result.description)
+	    $('#parameter_blank').append('<br>'+'Description : '+result.description)
 
           }
         }
