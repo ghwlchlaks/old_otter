@@ -81,6 +81,7 @@ app.use('/dist', express.static(__dirname +'/node_modules/bootstrap/dist'));
 app.use('/slack', clientRouter)
 app.use('/slacklist', clientRouter)
 
+app.use('/slackTest',indexRouter)
 app.use('/schema', indexRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
