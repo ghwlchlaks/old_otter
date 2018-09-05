@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const AdminControllerServices = require('../policies/AdminControllerServices')
+
 /* admin page. */
 router.get('/', function(req, res) {
 	res.render('admin');  

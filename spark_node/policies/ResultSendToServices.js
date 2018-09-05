@@ -8,41 +8,31 @@ slack.setWebhook(webhookUri);
 const nodemailer = require('nodemailer')
 
 module.exports = {
-  sendToService(req, res) {
+  sendToService(req, res, next) {
     const target = req.body.target
     const stdout = req.body.stdout
     const user = req.body.user
+    //const id = req.body.id
 
     if (target == "slack") {
-      sendToSlack("result : "+stdout, function(response) {
-        console.log(response)
-        res.send({status: true, result: response})
+      checkUser(user, function(result) {
+        console.log("result " + result)
+        if (!result) {
+          res.send({status:false, result: "slack user not found"})
+        } else {
+          sendToSlack("result : " + stdout, result, function(response){
+            console.log(response)
+            res.send({status: true, result: stdout})
+          })
+        }
       })
     } else if(target == "email") {
       sendToEmail("result : "+stdout, user, function(response) {
         console.log(response)
-        res.send({status: true, result: response})
+        res.send({status: true, result: stdout})
       })
     } else {}
   }
-}
-
-
-function sendToSlack (message, callback) {
-  slack.webhook({
-    channel: "@Choi", // 전송될 슬랙 채널
-    username: "webhookbot", //슬랙에 표시될 이름
-    text: message
-  }, function(err, response) {
-    if(!err) {
-            console.log("slack send success")
-            callback(response)
-        }
-    else {
-            console.log("slack send failed")
-            callback(err)
-        }
-  });
 }
 
 function sendToEmail(message, ToMailName, callback) {
@@ -70,4 +60,38 @@ function sendToEmail(message, ToMailName, callback) {
               callback(info)
           }
       })
+  }
+  function checkUser(id, callback) {
+    Request({
+      method: 'get',
+      url: `https://slack.com/api/rtm.start?token=${token}&pretty=1`,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }
+    }, function(err, response, body){
+      try{
+        if(!err && response.statusCode ==200){
+          const result = JSON.parse(body)
+          var users = result.users
+          for (var i in users) {
+            if (users[i].name == id ) {
+              var ims = result.ims
+              for (var j in ims) {
+                if (ims[j].user == users[i].id){
+                  //console.log(ims[j].id)
+                  callback(ims[j].id)
+                  return
+                }
+              }
+            }
+          }
+          //return {status: true, userId: }
+        }
+      }catch(e){
+        console.log(e)
+        callback(false)
+        return
+      }
+    })
+  
   }
