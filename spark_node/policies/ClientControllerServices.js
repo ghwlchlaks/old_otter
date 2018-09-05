@@ -15,7 +15,7 @@ module.exports = {
 			for(var i=1 ; i<dataList.length ; i++){
                 		dataList[i] = dataList[i].split('","permission')[0]
         		}
-			fs.readdir('./app', function (err, files){
+			fs.readdir('../app', function (err, files){
 				res.send({applist: files, datalist : dataList});
 			});
 		});

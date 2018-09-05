@@ -19,21 +19,21 @@ module.exports = {
     const id = req.body.id
 
     if (target == "slack") {
-      var check = checkUser(id)
-      console.log(check)
-      if (!check.status) {
-        res.send({status: false, result: "slack user not found"})
-      } else {
-        
-        sendToSlack("result : "+stdout, check.userId, function(response) {
-          console.log(response)
-          res.send({status: true, result: response})
-        })
-      }
+      checkUser(id, function(result) {
+        console.log("result " + result)
+        if (!result) {
+          res.send({status:false, result: "slack user not found"})
+        } else {
+          sendToSlack("result : " + stdout, result, function(response){
+            console.log(response)
+            res.send({status: true, result: stdout})
+          })
+        }
+      })
     } else if(target == "email") {
       sendToEmail("result : "+stdout, user, function(response) {
         console.log(response)
-        res.send({status: true, result: response})
+        res.send({status: true, result: stdout})
       })
     } else {}
   }
@@ -56,17 +56,17 @@ function checkUser(id, callback) {
             var ims = result.ims
             for (var j in ims) {
               if (ims[j].user == users[i].id){
-                //console.log(ims[j].id)
                 callback(ims[j].id)
-                
+                return
               }
             }
           }
         }
-        //return {status: true, userId: }
       }
     }catch(e){
+      console.log(e)
       callback(false)
+      return
     }
   })
 

@@ -4,7 +4,7 @@ var router = express.Router();
 
 const SchemaTest = require('../policies/SchemaTest')
 const authenticateServices = require('../policies/AuthencationServices')
-const Slack1 = require('../policies/Slack1')
+
 /* GET home page. */
 router.get('/', function(req,res) {
 	res.render('index')
@@ -32,6 +32,6 @@ router.get('/logout', function(req, res) {
 		}
 	})
 })
-router.post('/slackTest',Slack1.sendToService )
+
 router.post('/schema', SchemaTest.saved)
 module.exports = router;
