@@ -103,6 +103,7 @@ module.exports = {
 						typeMaxList[i] = metadata.parameters[i].inputType.max
 						typeMinList[i] = metadata.parameters[i].inputType.min
 					}
+					console.log(typeDataList[0].length)
 					res.send({nameList : nameList,
 						description : metadata.description,
 						descriptionList : descriptionList,

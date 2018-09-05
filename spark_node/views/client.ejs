@@ -32,18 +32,17 @@
 
     <br>
 
+    <p>upload data file</p>
     <form id='fileForm' method='post' enctype='multipart/form-data' action='/upload'>
 	<input type='file' id='fileInput' name='fileInput' accept=".txt, .log" size="500MB">
     </form>
     <button class='delete'>DATA FILE DELETE</button>
-    <input type="text" placeholder='asd'/>
 
 <br>
 <br>
-
+    <p>spark log</p>
     <textarea class='sparkLog' id='sparkLog' cols=60 rows=10>
     </textarea>
-
 
 <br>
 <br>
@@ -174,13 +173,17 @@ var parameterKey = new Array()
 
 $('.submit').click( function() {
 
-      var parameterValue = ''
+	//파라미터값 초기화
+	var parameterValue = ''
 
+	//파라미터값 입력
 	for(var i=0 ; i < parameterKey.length ; i++){
-	  parameterValue += parameterKey[i]
-	  parameterValue += $('#'+parameterKey[i]).val()
+	  parameterValue += parameterKey[i] + '=' + $('#'+parameterKey[i]).val()+' '
 	}
 
+      console.log(parameterValue)
+
+      //예외처리
       if($('#select_data option:selected').val() == null){
         alert('please select data file')
       } else if ($('#select_APP option:selected').val() == null){
@@ -305,24 +308,30 @@ function updateLog(){
         success: function(result) {
           if(result){
 
+	    //파라미터 입력 공간 초기화
 	    $('#parameter_blank').empty();
 	    parameterKey = []
 
+	    //모든 파라미터 체크
 	    for(var i=0 ; i<result.nameList.length ; i++){
 
-	      //make parameter key list
+	      //파라미터 키 리스트 작성
 	      parameterKey[i] = result.nameList[i]
 
-	      //check parameters input type
-	      if(result.typeList == 'text'){
-		//make input text parameters
+	      //파라미터 입력 타입 체크
+	      if(result.typeList[i] == 'text'){
+		//text 방식 입력 공간 생성
 		$('#parameter_blank').append(
-		result.nameList[i]+'<input id='+result.nameList[i]+'type="text" maxlength="'+result.typeMaxList[i]+'">'+result.descriptionList[i]+'<br>'
+		  result.nameList[i]+' '+'<input id='+result.nameList[i]+' type="text" maxlength="'+result.typeMaxList[i]+'"> ['+result.descriptionList[i]+']'+'<br>'
 		)
-	      }else if(result.typeList == 'radio'){
-		//make input radio parameters
-		$('#parameter_blank').append(
-		)
+	      }else if(result.typeList[i] == 'radio'){
+		//radio 방식 입력 공간 생성
+		$('#parameter_blank').append(result.nameList[i]+' ['+result.descriptionList[i]+']'+'<br>')
+		for(var j = 0 ; j < result.typeDataList[i].length ; j++){
+		  $('#parameter_blank').append(
+		    '<input id='+result.nameList[i]+' type="radio" value='+result.typeDataList[i][j]+' name='+result.nameList[i]+'/>'+result.typeDataList[i][j]+'<br>'
+		  )
+		}
 	      }
 
 	    }
