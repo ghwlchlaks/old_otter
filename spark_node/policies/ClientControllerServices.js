@@ -118,7 +118,7 @@ module.exports = {
 	},
 	sparkLog(req, res){
 		fs.readFile('/var/log/spark.log', 'utf-8', function(err, data){
-
+			//log4j 파일 내용
 			var addLog4j = "log4j.rootLogger=${root.logger}\nlog4j.appender.RollingAppender=org.apache.log4j.DailyRollingFileAppender\nlog4j.appender.RollingAppender.File=/var/log/spark.log\nlog4j.appender.RollingAppender.DatePattern='.'yyyy-MM-dd\nlog4j.appender.RollingAppender.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RollingAppender.layout.ConversionPattern=[%p] %d %c %M - %m%n\n# By default, everything goes to console and file\nlog4j.rootLogger=INFO, RollingAppender\nroot.logger=INFO,console\nlog4j.appender.console=org.apache.log4j.ConsoleAppender\nlog4j.appender.console.target=System.err\nlog4j.appender.console.layout=org.apache.log4j.PatternLayout\nlog4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n\nshell.log.level=WARN\nlog4j.logger.org.eclipse.jetty=WARN\nlog4j.logger.org.spark-project.jetty=WARN\nlog4j.logger.org.spark-project.jetty.util.component.AbstractLifeCycle=ERROR\nlog4j.logger.org.apache.spark.repl.SparkIMain$exprTyper=INFO\nlog4j.logger.org.apache.spark.repl.SparkILoop$SparkILoopInterpreter=INFO\nlog4j.logger.org.apache.parquet=ERROR\nlog4j.logger.parquet=ERROR\nlog4j.logger.org.apache.hadoop.hive.metastore.RetryingHMSHandler=FATAL\nlog4j.logger.org.apache.hadoop.hive.ql.exec.FunctionRegistry=ERROR\nlog4j.logger.org.apache.spark.repl.Main=${shell.log.level}\nlog4j.logger.org.apache.spark.api.python.PythonGatewayServer=${shell.log.level}\nlog4j.logger.org.apache.spark.repl.Main=${shell.log.level}\nlog4j.logger.org.apache.spark.api.python.PythonGatewayServer=${shell.log.level}"
 
 			if(err){//읽기에 오류 발생시
