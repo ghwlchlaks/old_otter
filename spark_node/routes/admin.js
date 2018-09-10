@@ -4,7 +4,13 @@ var router = express.Router();
 const AdminControllerServices = require('../policies/AdminControllerServices')
 
 /* admin page. */
-router.get('/', function(req, res) {
+var isAdminAuthenticated = function(req, res, next) {
+	if(req.isAuthenticated()){		
+		return next()
+	}
+	res.redirect('/')
+}
+router.get('/',isAdminAuthenticated, function(req, res) {
 	res.render('admin');  
 });
 

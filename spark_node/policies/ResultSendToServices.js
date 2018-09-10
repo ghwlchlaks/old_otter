@@ -1,11 +1,18 @@
 //slack config
-const Slack = require('slack-node');
-const webhookUri = "https://hooks.slack.com/services/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";
-const slack = new Slack();
-slack.setWebhook(webhookUri);
+const {WebClient} = require('@slack/client')
+const token = 'xoxp-401187969874-400943764356-429588191991-fd8e255bcf9ee5b0ed296e6115fbd0ac'
+const web = new WebClient(token)
+const Request= require('request')
 
 //mailer config
 const nodemailer = require('nodemailer')
+
+function sendToSlack(message, conversationId, callback) {
+  web.chat.postMessage({channel:conversationId, text: message})
+  .then((res)=> {
+    callback(res.ts)
+  }).catch(console.error)
+}
 
 module.exports = {
   sendToService(req, res, next) {
@@ -13,22 +20,23 @@ module.exports = {
     const stdout = req.body.stdout
     const user = req.body.user
     //const id = req.body.id
-
+    //console.log("user : "+ user)
     if (target == "slack") {
+      //console.log("target : "+target)
       checkUser(user, function(result) {
-        console.log("result " + result)
+        //console.log("result " + result)
         if (!result) {
           res.send({status:false, result: "slack user not found"})
         } else {
           sendToSlack("result : " + stdout, result, function(response){
-            console.log(response)
+            //console.log(response)
             res.send({status: true, result: stdout})
           })
         }
       })
     } else if(target == "email") {
       sendToEmail("result : "+stdout, user, function(response) {
-        console.log(response)
+        //console.log(response)
         res.send({status: true, result: stdout})
       })
     } else {}
@@ -36,7 +44,7 @@ module.exports = {
 }
 
 function sendToEmail(message, ToMailName, callback) {
-      console.log(ToMailName)
+      //console.log(ToMailName)
       let transport = nodemailer.createTransport({
           service : 'gmail',
           auth: {
@@ -78,7 +86,7 @@ function sendToEmail(message, ToMailName, callback) {
               var ims = result.ims
               for (var j in ims) {
                 if (ims[j].user == users[i].id){
-                  //console.log(ims[j].id)
+                  //console.log("id: "+ims[j].id)
                   callback(ims[j].id)
                   return
                 }
