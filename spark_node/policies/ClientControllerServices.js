@@ -120,19 +120,26 @@ module.exports = {
 		//first, make log file to log4j
 		fs.readFile('/var/log/spark.log', 'utf-8', function(err, data){
 
-			var latelyLog = new Array()
-			latelyLog[0] = ''
-			var visibleLog = 20
-
-			data = data.split('\n')
-
-			for(i = data.length-2 ; i > data.length-visibleLog ; i--){
-				for(j = visibleLog+2 ; j > -1 ; j--){
-					latelyLog[j] = latelyLog[j] + data[i] + '\n'
-				}
+			if(err){
+				fs.writeFile('/var/log/spark.log', 'make new log file', 'utf-8', function(err){
+					console.log('make new log file')
+				})
 			}
+			else {
+				var latelyLog = new Array()
+				latelyLog[0] = ''
+				var visibleLog = 20
 
-			res.send({latelyLog : latelyLog, allLog : data})
+				data = data.split('\n')
+
+				for(i = data.length-2 ; i > data.length-visibleLog ; i--){
+					for(j = visibleLog+2 ; j > -1 ; j--){
+						latelyLog[j] = latelyLog[j] + data[i] + '\n'
+					}
+				}
+
+				res.send({latelyLog : latelyLog, allLog : data})
+			}
 		})
 	}
 }
