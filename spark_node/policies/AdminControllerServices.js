@@ -8,9 +8,9 @@ var App = require('../models/appSchema').App
 module.exports = {
 	saveInfo(req, res) {
 		var body = req.info
-		console.log(fs.readFileSync('../jsonFolder/'+body,'utf8'))
+		//console.log(fs.readFileSync('../jsonFolder/'+body,'utf8'))
 		var info = JSON.parse(fs.readFileSync('../jsonFolder/'+body,'utf8'))
-		console.log("info : " +info)
+		console.log(info.appName)
 		App.findOne({"appName" : info.appName}, function(err, user) {
 			if(err) {
 				res.send({status:false, result: err})
@@ -45,31 +45,33 @@ module.exports = {
 		var form = new multiparty.Form({
 			autoFiles: false,
 			uploadDir: '../app/',
-			encoding: "UTF8"
 		});
 		form.parse(req, function(error, fields, files){
 			var path = files.appFile[0].path;
 			var originalName = files.appFile[0].originalFilename
-			//console.log(path)
 			if(error) {res.send({status: false, result:error})}
-			else {
-				fs.rename(path, '../app/' +originalName, function(err){
-					if(err) {res.send({status: false, result: err})}
-					else {
-						path = files.appFile[1].path
-						originalName = files.appFile[1].originalFilename
-						
-						fs.rename(path, '../jsonFolder/' +originalName, function(err) {
-							if(err) {res.send({status:false, result:err})}
-							else {
-								req.info = originalName
-								//console.log("req body" +req.info)
-								next()
-							}
-						})
-					}
-				})
-			}
+			fs.exists('../app/'+originalName,function(appExists){
+				if(appExists) {
+					res.send({status: false, result: "same file name exists"})
+				} else {
+					fs.rename(path, '../app/' +originalName, function(err){
+						if(err) {res.send({status: false, result: err})}
+						else {
+							path = files.appFile[1].path
+							originalName = files.appFile[1].originalFilename
+							
+							fs.rename(path, '../jsonFolder/' +originalName, function(err) {
+								if(err) {res.send({status:false, result:err})}
+								else {
+									req.info = originalName
+									//console.log("req body" +req.info)
+									next()
+								}
+							})
+						}
+					})
+				}
+			})		
         });
 	},
 	appList(req, res) {
@@ -96,23 +98,35 @@ module.exports = {
 	delApp(req, res) {
 		var id = req.query.id
 		var path = '../app/'+id
-		fs.exists(path, function(exists) {
-			if(!exists) {res.send({status: false, result: "not exists"})}
+		fs.exists(path, function(appExists) {
+			if(!appExists) {res.send({status: false, result: "not exists"})}
 			else {
 				fs.unlink(path, function(err){
 					if(err) {res.send({status: false, result: "permission denied"})}
 					else {
-						App.remove({appName:id},function(err, result) {
-							if(err) {res.send({status: false, result:err})}
-							if(!result) {res.send({status: false, result: result})}
+						path = '../jsonFolder/' + id.split(".")[0] + ".json"
+						fs.exists(path, function(jsonExists){
+							if(!jsonExists) {res.send({status: false, result: "not exists"})}
 							else {
-								res.send({status: true, result: result})
+								fs.unlink(path, function(err) {
+									if(err) {res.send({status: false, result: "permission denied"})}
+									 else {
+										App.remove({appName:id},function(err, result) {
+											if(err) {res.send({status: false, result:err})}
+											if(!result) {res.send({status: false, result: result})}
+											else {
+												res.send({status: true, result: result})
+											}
+										})
+									 }
+								})
 							}
 						})
 					}
 				}) 
 			}
 		})
+		
 	}
 }
 
