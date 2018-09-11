@@ -8,8 +8,9 @@ var App = require('../models/appSchema').App
 module.exports = {
 	saveInfo(req, res) {
 		var body = req.info
-		var info = JSON.parse(fs.readFileSync('../jsonFolder/'+body,'utf-8'))
-		console.log(info)
+		console.log(fs.readFileSync('../jsonFolder/'+body,'utf8'))
+		var info = JSON.parse(fs.readFileSync('../jsonFolder/'+body,'utf8'))
+		console.log("info : " +info)
 		App.findOne({"appName" : info.appName}, function(err, user) {
 			if(err) {
 				res.send({status:false, result: err})
@@ -17,6 +18,7 @@ module.exports = {
 			if(!user) {
 				//save data
 				parameter = []
+
 				for (var data of info.parameters){
 					parameter.push(data)
 				}
@@ -43,10 +45,12 @@ module.exports = {
 		var form = new multiparty.Form({
 			autoFiles: false,
 			uploadDir: '../app/',
+			encoding: "UTF8"
 		});
 		form.parse(req, function(error, fields, files){
 			var path = files.appFile[0].path;
 			var originalName = files.appFile[0].originalFilename
+			//console.log(path)
 			if(error) {res.send({status: false, result:error})}
 			else {
 				fs.rename(path, '../app/' +originalName, function(err){
@@ -54,11 +58,12 @@ module.exports = {
 					else {
 						path = files.appFile[1].path
 						originalName = files.appFile[1].originalFilename
+						
 						fs.rename(path, '../jsonFolder/' +originalName, function(err) {
 							if(err) {res.send({status:false, result:err})}
 							else {
 								req.info = originalName
-								console.log(req.info)
+								//console.log("req body" +req.info)
 								next()
 							}
 						})

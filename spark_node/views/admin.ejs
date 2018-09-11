@@ -2,8 +2,7 @@
   <head>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="UTF-8" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" charset="utf-8"></script>
     <style>
 			#allState {visibility: hidden;}
 	</style>
@@ -22,10 +21,10 @@
     <h3 id="type">[type]</h3>
     </div>
 
-    <form action="/admin/saveApp"  method="post" enctype="multipart/form-data" id="fileForm">
+    <form action="/admin/saveApp"  method="post" enctype="multipart/form-data" id="fileForm" accept-charset="utf-8">
         <input type='file' id='appFile' name='appFile' accept=".py">
         <br>    
-    <input type='file' id='metaFile' name='appFile' accept=".json">
+    <input type='file' id='metaFile' name='appFile' accept=".json" accept-charset="utf-8">
     </form>
     
     
@@ -275,7 +274,7 @@ function allRefreshState() {
         })
         function readTextFile(file, callback) {
             var rawFile = new XMLHttpRequest();
-                    rawFile.overrideMimeType("application/json");
+                    rawFile.overrideMimeType("application/json;charset=euc-kr");
                     rawFile.open("GET", file, true);
                     rawFile.onreadystatechange = function() {
                     if (rawFile.readyState === 4 && rawFile.status == "200") {
@@ -303,10 +302,14 @@ function allRefreshState() {
                         
                         var inputParameters = []
                        
+                        try {
                         if (data.parameters.length > 0) {
                             for (var i in data.parameters) {
                                 inputParameters.push(data.parameters[i])
                             }
+                        }
+                    } catch (e) {
+                        console.log(e)
                         }
                         info.parameters = inputParameters
                     })
@@ -339,12 +342,14 @@ function allRefreshState() {
             
             var fileValue = $('#appFile').val().split("\\");
             info.appName = fileValue[fileValue.length-1];
-
+            
             //app data
             var form = $('#fileForm')[0];
             var formData = new FormData(form);
-            formData.append("metaFile",$('#metaFile'))
             
+            
+            formData.append("metaFile",$('#metaFile'))
+            //console.log(formData)
             //save : app(.py..) + parameterFile(.json..) in mongodb 
             $.ajax({
                 url: '/admin/saveApp',
@@ -362,7 +367,8 @@ function allRefreshState() {
                 error: function (err) {
                     console.log(err);
                 }
-            });                
+            });       
+            
     })
     </script>
   </body>
