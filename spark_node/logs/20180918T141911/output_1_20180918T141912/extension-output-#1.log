@@ -13,3 +13,7 @@ Open repository: /root/test/otter
 > git show :.gitignore
 > git check-ignore -z --stdin
 > git check-ignore -z --stdin
+> git check-ignore -z --stdin
+> git check-ignore -z --stdin
+> git check-ignore -z --stdin
+> git check-ignore -z --stdin
