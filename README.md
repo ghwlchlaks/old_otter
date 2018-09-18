@@ -1,7 +1,7 @@
 # Spark
 
 ## How to Use
-git clone http://git.nilab.xyz:6363/nightzen/otter.git
+git clone http://git.nilab.xyz:6363/nightzen/otter.git \n
 cd otter/Spark
 npm install
 nodemon app.js
