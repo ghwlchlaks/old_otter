@@ -1,2 +1,0 @@
-Could not find valid SPARK_HOME while searching ['/home/zest3', '/usr/local/bin']
-/usr/local/bin/spark-submit: 줄 27: /bin/spark-class: 그런 파일이나 디렉터리가 없습니다
